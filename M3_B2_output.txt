@@ -1,0 +1,30 @@
+Individuals:
++-----+-------------------+--------+------------+------------+-------+--------+--------+-----+
+|  ID |        Name       | Gender |  Birthday  |   Death    | Alive | Child  | Spouse | Age |
++-----+-------------------+--------+------------+------------+-------+--------+--------+-----+
+|  I1 |  Allen /Roberts/  |   M    | 1940-01-01 | 2011-05-06 | False | {'F2'} | {'F1'} |  71 |
+|  I2 | Julie /Jefferson/ |   F    | 1945-12-04 | 2019-02-11 | False |   NA   | {'F1'} |  73 |
+|  I3 | Jenifer /Roberts/ |   F    | 1975-05-01 |     NA     |  True | {'F1'} | {'F4'} |  48 |
+|  I4 |   Andy /Raonic/   |   M    | 1974-12-06 |     NA     |  True |   NA   | {'F4'} |  48 |
+|  I5 |   Marie /Raonic/  |   F    | 2002-07-04 |     NA     |  True | {'F4'} |   NA   |  20 |
+|  I6 |   Nick /Rosberg/  |   M    | 1974-11-05 |     NA     |  True |   NA   | {'F3'} |  48 |
+|  I7 |  Roger /Rosberg/  |   M    | 2021-03-01 |     NA     |  True | {'F3'} |   NA   |  2  |
+|  I8 |  Tyler /Roberts/  |   M    | 1911-07-16 | 1979-11-04 | False |   NA   | {'F2'} |  68 |
+|  I9 |  Jenny /Gilbert/  |   F    | 1918-03-31 | 1982-01-02 | False |   NA   | {'F2'} |  63 |
+| I10 |   Mark /Roberts/  |   M    | 1945-05-12 | 1989-01-10 | False | {'F2'} | {'F5'} |  43 |
+| I11 |  Agatha /Murray/  |   F    | 1950-02-04 |     NA     |  True |   NA   | {'F6'} |  73 |
+| I12 | Joseph /Reynolds/ |   M    | 1950-05-04 |     NA     |  True |   NA   | {'F6'} |  73 |
+| I13 |  Jeremy /Roberts/ |   M    | 1982-12-01 |     NA     |  True | {'F5'} |   NA   |  40 |
+| I14 |  Lewis /Reynolds/ |   M    | 1994-03-12 |     NA     |  True | {'F6'} |   NA   |  29 |
++-----+-------------------+--------+------------+------------+-------+--------+--------+-----+
+Families:
++----+------------+-------------------+---------+-------------------+------------+------------+---------------+
+| ID | Husband ID |    Husband Name   | Wife ID |     Wife Name     |  Married   |  Divorced  |    Children   |
++----+------------+-------------------+---------+-------------------+------------+------------+---------------+
+| F1 |     I1     |  Allen /Roberts/  |    I2   | Julie /Jefferson/ | 1972-10-08 |     NA     |     ['I3']    |
+| F2 |     I8     |  Tyler /Roberts/  |    I9   |  Jenny /Gilbert/  | 1939-02-26 |     NA     | ['I1', 'I10'] |
+| F3 |     I6     |   Nick /Rosberg/  |    I3   | Jenifer /Roberts/ | 2018-05-17 |     NA     |     ['I7']    |
+| F4 |     I4     |   Andy /Raonic/   |    I3   | Jenifer /Roberts/ | 2001-06-12 | 2015-04-30 |     ['I5']    |
+| F5 |    I10     |   Mark /Roberts/  |   I11   |  Agatha /Murray/  |     NA     |     NA     |    ['I13']    |
+| F6 |    I12     | Joseph /Reynolds/ |   I11   |  Agatha /Murray/  | 1990-09-10 |     NA     |    ['I14']    |
++----+------------+-------------------+---------+-------------------+------------+------------+---------------+
