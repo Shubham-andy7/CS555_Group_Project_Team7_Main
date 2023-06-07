@@ -1,5 +1,5 @@
 from datetime import datetime
-# from prettytable import PrettyTable
+from prettytable import PrettyTable
 
 def get_ind_fam_details(gedcomfile):
     individuals = []
@@ -153,11 +153,23 @@ def get_ind_fam_details(gedcomfile):
 
 
 def display_gedcom_table(individuals, family):
-    # Print Individuals table
-
-    # Print Families table
     
-    return
+    #Print individuals table
+    inditable = PrettyTable()
+    inditable.field_names = ['ID', 'Name', 'Gender', 'Alive', 'Death', 'Child', 'Spouse', 'Age', 'Birthday']
+    for i in individuals.keys():
+        inditable.add_row(list(individuals[i].values()))
+    print('Individuals:')
+    print(inditable)
+
+    print(family)
+    #Print Families table
+    famtable = PrettyTable()
+    famtable.field_names = ['ID', 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Married', 'Divorced', 'Children']
+    for i in family.keys():
+        famtable.add_row(list(family[i].values()))
+    print('Families:')
+    print(famtable)
 
 
 if __name__ == "__main__":
