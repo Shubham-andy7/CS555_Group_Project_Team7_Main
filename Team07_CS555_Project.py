@@ -1,10 +1,15 @@
 from datetime import datetime
+# from prettytable import PrettyTable
 
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
     indidict = {}
     is_individual = False
+    families = []
+    family = []
+    famdict = {}
+    is_family = False
 
     for line in gedcomfile:
         if "INDI" in line:
@@ -19,6 +24,18 @@ def get_ind_fam_details(gedcomfile):
                 is_individual = False
             else:
                 individual.append(line)
+        if "FAM" in line:
+            if family:
+                families.append(family)
+            family = [line]
+            is_family = True
+        elif is_family:
+            if line.startswith(("0 @", "1 @", "2 @")):
+                families.append(family)
+                family = []
+                is_family = False
+            else:
+                family.append(line)
 
     if individual:
         individuals.append(individual)
@@ -29,18 +46,22 @@ def get_ind_fam_details(gedcomfile):
                 detail = person[details].split('@')
                 id = detail[1]
                 indidict[f'{id}'] = {'id': id}
-            elif 'NAME' in person[details]:
-                detail = person[details].replace('1 NAME ', '')
                 indidict[f'{id}']['Name'] = detail
+                indidict[f'{id}']['Gender'] = 'NA'
+                indidict[f'{id}']['Birthday'] = 'NA'
+                indidict[f'{id}']['Death'] = 'NA'
+                indidict[f'{id}']['Alive'] = 'False'
+                indidict[f'{id}']['Child'] = 'NA'
+                indidict[f'{id}']['Spouse'] = 'NA'
+            elif 'NAME' in person[details]:
+                indidict[f'{id}']['Name'] = 'NA'
+                detail = person[details].replace('1 NAME ', '')
             elif 'SEX' in person[details]:
                 detail = person[details].split(' ')
                 indidict[f'{id}']['Gender'] = detail[2]
             elif 'BIRT' in person[details]:
                 next = details + 1
                 indidict[f'{id}']['Alive'] = 'True'
-                indidict[f'{id}']['Death'] = 'N/A'
-                indidict[f'{id}']['Child'] = 'N/A'
-                indidict[f'{id}']['Spouse'] = 'N/A'
                 if 'DATE' in person[next]:
                     detail = person[next]
                     detail = detail.replace('2 DATE ', '')
@@ -78,26 +99,65 @@ def get_ind_fam_details(gedcomfile):
                 detail = person[details].split('@')
                 childid = detail[1]
                 indidict[f'{id}']['Child'] = "{\'" + f"{childid}" + "\'}"
-
     
-    for i, j in indidict.items():
-        print(i, j)
-        print('\n\n')
-
+    if family:
+        families.append(family)
+    id = None
+    for fam in families:
+        for details in range(0, len(fam)):
+            if 'FAM' in fam[details]:
+                detail = fam[details].split('@')
+                id = detail[1]
+                famdict[f'{id}'] = {'id': id}
+                famdict[f'{id}']['Husband ID'] = 'NA'
+                famdict[f'{id}']['Husband Name'] = 'NA'
+                famdict[f'{id}']['Wife ID'] = 'NA'
+                famdict[f'{id}']['Wife Name'] = 'NA'
+                famdict[f'{id}']['Married'] = 'NA'
+                famdict[f'{id}']['Divorced'] = 'NA'
+                famdict[f'{id}']['Children'] = ['NA'] 
+            elif 'HUSB' in fam[details]:
+                detail = fam[details].split('@')
+                husbid = detail[1]
+                famdict[f'{id}']['Husband ID'] = husbid
+                famdict[f'{id}']['Husband Name'] = indidict.get(husbid, {}).get('Name', 'Unknown')
+            elif 'WIFE' in fam[details]:
+                detail = fam[details].split('@')
+                wifeid = detail[1]
+                famdict[f'{id}']['Wife ID'] = wifeid
+                famdict[f'{id}']['Wife Name'] = indidict.get(wifeid, {}).get('Name', 'Unknown')
+            elif 'CHIL' in fam[details]:
+                detail = fam[details].split('@')
+                childid = detail[1]
+                famdict[f'{id}']['Children'].append(childid)
+            
+            elif 'MARR' in fam[details]:
+                next = details + 1
+                if 'DATE' in fam[next]:
+                    detail = fam[next]
+                    detail = detail.replace('2 DATE ', '')
+                    detail = datetime.strptime(detail, "%d %b %Y")
+                    detail = detail.strftime("%Y-%m-%d")
+                    famdict[f'{id}']['Married'] = detail
+            elif 'DIV' in fam[details]:
+                next = details + 1
+                if 'DATE' in fam[next]:
+                    detail = fam[next]
+                    detail = detail.replace('2 DATE ', '')
+                    detail = datetime.strptime(detail, "%d %b %Y")
+                    detail = detail.strftime("%Y-%m-%d")
+                    famdict[f'{id}']['Divorced'] = detail
+    
     # Return Families
-    return indidict
+    return indidict, famdict
 
 
-def display_gedcom_table(individuals, families):
+def display_gedcom_table(individuals, family):
     # Print Individuals table
-    print("Individuals:")
-    for individual in individuals:
-        print(individual)
 
     # Print Families table
-    print("Families:")
-    for family in families:
-        print(family)
+    
+    return
 
 
 if __name__ == "__main__":
@@ -106,7 +166,7 @@ if __name__ == "__main__":
         gedcomfile = [line.rstrip('\n') for line in gedcomfile]
 
         # Retrieve the Individuals and Family from the input file
-        individuals, families = get_ind_fam_details(gedcomfile)
+        individuals, family = get_ind_fam_details(gedcomfile)
 
         # Print The details using Pretty Table Library
-        display_gedcom_table(individuals, families)
+        display_gedcom_table(individuals, family)
