@@ -54,8 +54,8 @@ def get_ind_fam_details(gedcomfile):
                 indidict[f'{id}']['Child'] = 'NA'
                 indidict[f'{id}']['Spouse'] = 'NA'
             elif 'NAME' in person[details]:
-                indidict[f'{id}']['Name'] = 'NA'
                 detail = person[details].replace('1 NAME ', '')
+                indidict[f'{id}']['Name'] = detail
             elif 'SEX' in person[details]:
                 detail = person[details].split(' ')
                 indidict[f'{id}']['Gender'] = detail[2]
@@ -115,7 +115,7 @@ def get_ind_fam_details(gedcomfile):
                 famdict[f'{id}']['Wife Name'] = 'NA'
                 famdict[f'{id}']['Married'] = 'NA'
                 famdict[f'{id}']['Divorced'] = 'NA'
-                famdict[f'{id}']['Children'] = ['NA'] 
+                famdict[f'{id}']['Children'] = [] 
             elif 'HUSB' in fam[details]:
                 detail = fam[details].split('@')
                 husbid = detail[1]
@@ -155,14 +155,15 @@ def get_ind_fam_details(gedcomfile):
 def display_gedcom_table(individuals, family):
     
     #Print individuals table
+    #print(individuals)
     inditable = PrettyTable()
-    inditable.field_names = ['ID', 'Name', 'Gender', 'Alive', 'Death', 'Child', 'Spouse', 'Age', 'Birthday']
+    inditable.field_names = ['ID', 'Name', 'Gender', 'Birthday', 'Death', 'Alive', 'Child', 'Spouse', 'Age']
     for i in individuals.keys():
         inditable.add_row(list(individuals[i].values()))
     print('Individuals:')
     print(inditable)
 
-    print(family)
+    #print(family)
     #Print Families table
     famtable = PrettyTable()
     famtable.field_names = ['ID', 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Married', 'Divorced', 'Children']
