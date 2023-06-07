@@ -156,21 +156,23 @@ def display_gedcom_table(individuals, family):
     
     #Print individuals table
     #print(individuals)
-    inditable = PrettyTable()
-    inditable.field_names = ['ID', 'Name', 'Gender', 'Birthday', 'Death', 'Alive', 'Child', 'Spouse', 'Age']
-    for i in individuals.keys():
-        inditable.add_row(list(individuals[i].values()))
-    print('Individuals:')
-    print(inditable)
+    output_tables = ""
+    with open('M3_B2_output.txt','w') as output:
+        inditable = PrettyTable()
+        inditable.field_names = ['ID', 'Name', 'Gender', 'Birthday', 'Death', 'Alive', 'Child', 'Spouse', 'Age']
+        for i in individuals.keys():
+            inditable.add_row(list(individuals[i].values()))
+        output_tables += 'Individuals:' + '\n' + str(inditable) + '\n'
 
-    #print(family)
-    #Print Families table
-    famtable = PrettyTable()
-    famtable.field_names = ['ID', 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Married', 'Divorced', 'Children']
-    for i in family.keys():
-        famtable.add_row(list(family[i].values()))
-    print('Families:')
-    print(famtable)
+        #print(family)
+        #Print Families table
+        famtable = PrettyTable()
+        famtable.field_names = ['ID', 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Married', 'Divorced', 'Children']
+        for i in family.keys():
+            famtable.add_row(list(family[i].values()))
+        output_tables += 'Families:' + '\n' + str(famtable) + '\n'
+
+        output.write(output_tables)
 
 
 if __name__ == "__main__":
