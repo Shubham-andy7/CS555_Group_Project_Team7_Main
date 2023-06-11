@@ -1,6 +1,30 @@
 from datetime import datetime
 from prettytable import PrettyTable
 
+#User Story: 03 - Birth before death
+def US3_birth_before_death(individuals):
+    Error03 = []
+    for id in individuals:
+        if individuals[id]["Death"] != 'NA':
+            deathday = datetime.strptime(individuals[id]["Death"], "%Y-%m-%d")
+            birthday = datetime.strptime(individuals[id]["Birthday"], "%Y-%m-%d")
+            if deathday < birthday:
+                Error03.append(individuals[id])
+    return Error03
+
+
+#User Story: 04 - Marriage before divorce
+def US4_marriage_before_divorce(family):
+    Error04 = []
+    for id in family:
+        if family[id]["Divorced"] != 'NA':
+            divorceday = datetime.strptime(family[id]["Divorced"], "%Y-%m-%d")
+            marriageday = datetime.strptime(family[id]["Married"], "%Y-%m-%d")
+            if divorceday < marriageday:
+                Error04.append(family[id])
+    return Error04
+
+
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
@@ -185,3 +209,11 @@ if __name__ == "__main__":
 
         # Print The details using Pretty Table Library
         display_gedcom_table(individuals, family)
+
+        #User Story: 03 - Birth before death
+        Error03 = US3_birth_before_death(individuals)
+        print("Errors related to Birth before Death: ", Error03)
+
+        #User Story: 04 - Marriage before divorce
+        Error04 = US4_marriage_before_divorce(family)
+        print("Errors related to Marriage before Divorce: ", Error04)
