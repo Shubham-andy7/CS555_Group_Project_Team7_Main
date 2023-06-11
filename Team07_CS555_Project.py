@@ -214,6 +214,6 @@ if __name__ == "__main__":
         Error03 = US3_birth_before_death(individuals)
         print("Errors related to Birth before Death: ", Error03)
 
-        #User Story: 03 - Birth before death
+        #User Story: 04 - Marriage before divorce
         Error04 = US4_marriage_before_divorce(family)
         print("Errors related to Marriage before Divorce: ", Error04)
