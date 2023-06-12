@@ -1,5 +1,7 @@
 from datetime import datetime
 from prettytable import PrettyTable
+from dateutil.relativedelta import relativedelta
+
 
 #User Story: 03 - Birth before death
 def US3_birth_before_death(individuals):
@@ -23,6 +25,63 @@ def US4_marriage_before_divorce(family):
             if divorceday < marriageday:
                 Error04.append(family[id])
     return Error04
+
+
+# User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people
+def US7_Death_less_150_after_birth(individuals):
+    Error07 = []
+    current_date = datetime.now()
+    for id in individuals:
+        birth = individuals[id]["Birthday"]
+        death = individuals[id]["Death"]
+        alive = individuals[id]["Alive"]
+        
+        if alive == 'False' and death != 'NA':
+            birth_date = datetime.strptime(birth, "%Y-%m-%d")
+            death_date = datetime.strptime(death, "%Y-%m-%d")
+            age_at_death = death_date.year - birth_date.year
+
+            if age_at_death > 150:
+                Error07.append(individuals[id])
+        
+        if alive == 'True':
+            birth_date = datetime.strptime(birth, "%Y-%m-%d")
+            age = current_date.year - birth_date.year
+
+            if age > 150:
+                Error07.append(individuals[id])
+
+    return Error07
+
+
+# User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
+def US8_child_birth_before_parent_death(family, individuals):
+    Error08 = []
+
+    for id in family:
+        mother_id = family[id]['Wife ID']
+        father_id = family[id]['Husband ID']
+        children = family[id]['Children']
+        mother_death = individuals[mother_id]['Death']
+        father_death = individuals[father_id]['Death']
+
+        if mother_death != 'NA' and children:
+            mother_death_date = datetime.strptime(mother_death, "%Y-%m-%d")
+            for child_id in children:
+                child_birth = individuals[child_id]['Birthday']
+                child_birth_date = datetime.strptime(child_birth, "%Y-%m-%d")
+                if child_birth_date > mother_death_date:
+                    Error08.append(individuals[child_id])
+        
+        if father_death != 'NA' and children:
+            father_death_date = datetime.strptime(father_death, "%Y-%m-%d")
+            for child_id in children:
+                child_birth = individuals[child_id]['Birthday']
+                child_birth_date = datetime.strptime(child_birth, "%Y-%m-%d")
+                if child_birth_date > father_death_date + relativedelta(months=9):
+                    Error08.append(individuals[child_id])
+    
+    return Error08
 
 
 def get_ind_fam_details(gedcomfile):
@@ -217,3 +276,11 @@ if __name__ == "__main__":
         #User Story: 04 - Marriage before divorce
         Error04 = US4_marriage_before_divorce(family)
         print("Errors related to Marriage before Divorce: ", Error04)
+
+        # User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people
+        Error07 = US7_Death_less_150_after_birth(individuals)
+        print("Errors related to death Less then 150 years after birth (US07): ", Error07)
+
+         # User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
+        Error08 = US8_child_birth_before_parent_death(family, individuals)
+        print("Errors related to Child birth before parent death (US08): ", Error08)
