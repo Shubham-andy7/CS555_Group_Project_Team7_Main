@@ -1,6 +1,42 @@
 from datetime import datetime
 from prettytable import PrettyTable
 
+#User Story 05: Marriage before death error check
+def US5_marriage_before_death(individuals, family):
+    Error05 = []
+    for id in family:
+        if family[id]['Married'] != 'NA':
+            marriage_date = datetime.strptime(family[id]['Married'], "%Y-%m-%d")
+            husband_id = family[id]['Husband ID']
+            wife_id = family[id]['Wife ID']
+            if individuals[husband_id]['Death'] != 'NA':
+                husband_dday = datetime.strptime(individuals[husband_id]['Death'], "%Y-%m-%d")
+                if husband_dday < marriage_date:
+                    Error05.append(individuals[husband_id])
+            if individuals[wife_id]['Death'] != 'NA':
+                wife_dday = datetime.strptime(individuals[wife_id]['Death'], "%Y-%m-%d")
+                if wife_dday < marriage_date:
+                    Error05.append(individuals[wife_id])
+    return Error05
+
+#User Story 06: Divorce before death error check
+def US6_divorce_before_death(individuals, family):
+    Error06 = []
+    for id in family:
+        if family[id]['Divorced'] != 'NA':
+            divorced_date = datetime.strptime(family[id]['Divorced'], "%Y-%m-%d")
+            husband_id = family[id]['Husband ID']
+            wife_id = family[id]['Wife ID']
+            if individuals[husband_id]['Death'] != 'NA':
+                husband_dday = datetime.strptime(individuals[husband_id]['Death'], "%Y-%m-%d")
+                if husband_dday < divorced_date:
+                    Error06.append(individuals[husband_id])
+            if individuals[wife_id]['Death'] != 'NA':
+                wife_dday = datetime.strptime(individuals[wife_id]['Death'], "%Y-%m-%d")
+                if wife_dday < divorced_date:
+                    Error06.append(individuals[wife_id])
+    return Error06
+
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
@@ -182,6 +218,14 @@ if __name__ == "__main__":
 
         # Retrieve the Individuals and Family from the input file
         individuals, family = get_ind_fam_details(gedcomfile)
+
+        #User Story 05: Marriage before death
+        Error05 = US5_marriage_before_death(individuals, family)
+        print("Errors related to marriage date not being before death date: ", Error05)
+
+        #User Story 06: Divorce before death
+        Error06 = US6_divorce_before_death(individuals, family)
+        print("Errors related to divorce date not being before death date: ", Error06)
 
         # Print The details using Pretty Table Library
         display_gedcom_table(individuals, family)
