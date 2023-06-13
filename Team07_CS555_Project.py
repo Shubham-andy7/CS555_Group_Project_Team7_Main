@@ -71,8 +71,9 @@ def get_ind_fam_details(gedcomfile):
                     birth_date = datetime.strptime(birth, "%Y-%m-%d")
                     current_date = datetime.now()
                     age = current_date.year - birth_date.year
-                    if current_date.month < birth_date.month or (current_date.month == birth_date.month and current_date.day < birth_date.day):
-                        age -= 1
+                    if birth_date > current_date:
+                       print(f"Error: Individual {id}'s birth date {birth} should not be in the future.")
+                       continue
                     indidict[f'{id}']['Age'] = age
                     indidict[f'{id}']['Birthday'] = detail
             elif 'DEAT' in person[details]:
@@ -139,6 +140,17 @@ def get_ind_fam_details(gedcomfile):
                     detail = datetime.strptime(detail, "%d %b %Y")
                     detail = detail.strftime("%Y-%m-%d")
                     famdict[f'{id}']['Married'] = detail
+                    married_date = datetime.strptime(detail, "%Y-%m-%d")
+                    if married_date > current_date:
+                       print(f"Error: Family {id}'s marriage date {detail} should not be in the future.")
+                       continue
+
+                    # Marriage should occur after the birth of both individuals
+                    husb_birthday = datetime.strptime(indidict.get(famdict[f'{id}']['Husband ID'], {}).get('Birthday', '0001-01-01'), "%Y-%m-%d")
+                    wife_birthday = datetime.strptime(indidict.get(famdict[f'{id}']['Wife ID'], {}).get('Birthday', '0001-01-01'), "%Y-%m-%d")
+                    if married_date < husb_birthday or married_date < wife_birthday:
+                       print(f"Error: Family {id}'s marriage date {detail} should not be before the birth of either spouse.")
+                       continue
             elif 'DIV' in fam[details]:
                 next = details + 1
                 if 'DATE' in fam[next]:
