@@ -1,6 +1,15 @@
 from datetime import datetime
 from prettytable import PrettyTable
 
+def check_date_future(date_str):
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    return date_obj > datetime.now()
+
+def check_birth_before_marriage(ind_birthday, marriage_date):
+    birth_date = datetime.strptime(ind_birthday, "%Y-%m-%d")
+    marr_date = datetime.strptime(marriage_date, "%Y-%m-%d")
+    return birth_date > marr_date
+
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
@@ -71,11 +80,12 @@ def get_ind_fam_details(gedcomfile):
                     birth_date = datetime.strptime(birth, "%Y-%m-%d")
                     current_date = datetime.now()
                     age = current_date.year - birth_date.year
-                    if birth_date > current_date:
-                       print(f"Error: Individual {id}'s birth date {birth} should not be in the future.")
-                       continue
+                    if current_date.month < birth_date.month or (current_date.month == birth_date.month and current_date.day < birth_date.day):
+                        age -= 1
                     indidict[f'{id}']['Age'] = age
                     indidict[f'{id}']['Birthday'] = detail
+                    if check_date_future(detail):
+                        print(f"Error: Individual {id}'s birth date {detail} should not be in the future.")
             elif 'DEAT' in person[details]:
                 next = details + 1
                 indidict[f'{id}']['Alive'] = 'False'
@@ -140,17 +150,15 @@ def get_ind_fam_details(gedcomfile):
                     detail = datetime.strptime(detail, "%d %b %Y")
                     detail = detail.strftime("%Y-%m-%d")
                     famdict[f'{id}']['Married'] = detail
-                    married_date = datetime.strptime(detail, "%Y-%m-%d")
-                    if married_date > current_date:
-                       print(f"Error: Family {id}'s marriage date {detail} should not be in the future.")
-                       continue
-
-                    # Marriage should occur after the birth of both individuals
-                    husb_birthday = datetime.strptime(indidict.get(famdict[f'{id}']['Husband ID'], {}).get('Birthday', '0001-01-01'), "%Y-%m-%d")
-                    wife_birthday = datetime.strptime(indidict.get(famdict[f'{id}']['Wife ID'], {}).get('Birthday', '0001-01-01'), "%Y-%m-%d")
-                    if married_date < husb_birthday or married_date < wife_birthday:
-                       print(f"Error: Family {id}'s marriage date {detail} should not be before the birth of either spouse.")
-                       continue
+                    if check_date_future(detail):
+                        print(f"Error: Family {id}'s marriage date {detail} should not be in the future.")
+                    husb_birthday = indidict.get(husbid, {}).get('Birthday', '')
+                    wife_birthday = indidict.get(wifeid, {}).get('Birthday', '')
+                    if husb_birthday and check_birth_before_marriage(husb_birthday, detail):
+                        print(f"Error: Husband {husbid} in family {id} has marriage date {detail} before birth date {husb_birthday}.")
+                    if wife_birthday and check_birth_before_marriage(wife_birthday, detail):
+                        print(f"Error: Wife {wifeid} in family {id} has marriage date {detail} before birth date {wife_birthday}.")
+                    
             elif 'DIV' in fam[details]:
                 next = details + 1
                 if 'DATE' in fam[next]:
@@ -159,41 +167,5 @@ def get_ind_fam_details(gedcomfile):
                     detail = datetime.strptime(detail, "%d %b %Y")
                     detail = detail.strftime("%Y-%m-%d")
                     famdict[f'{id}']['Divorced'] = detail
-    
-    # Return Families
+                    
     return indidict, famdict
-
-
-def display_gedcom_table(individuals, family):
-    
-    #Print individuals table
-    #print(individuals)
-    output_tables = ""
-    with open('M3_B2_output.txt','w') as output:
-        inditable = PrettyTable()
-        inditable.field_names = ['ID', 'Name', 'Gender', 'Birthday', 'Death', 'Alive', 'Child', 'Spouse', 'Age']
-        for i in individuals.keys():
-            inditable.add_row(list(individuals[i].values()))
-        output_tables += 'Individuals:' + '\n' + str(inditable) + '\n'
-
-        #print(family)
-        #Print Families table
-        famtable = PrettyTable()
-        famtable.field_names = ['ID', 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Married', 'Divorced', 'Children']
-        for i in family.keys():
-            famtable.add_row(list(family[i].values()))
-        output_tables += 'Families:' + '\n' + str(famtable) + '\n'
-
-        output.write(output_tables)
-
-
-if __name__ == "__main__":
-    with open("Shubham_Gedcome.ged", "r") as gedcomf:
-        gedcomfile = gedcomf.readlines()
-        gedcomfile = [line.rstrip('\n') for line in gedcomfile]
-
-        # Retrieve the Individuals and Family from the input file
-        individuals, family = get_ind_fam_details(gedcomfile)
-
-        # Print The details using Pretty Table Library
-        display_gedcom_table(individuals, family)
