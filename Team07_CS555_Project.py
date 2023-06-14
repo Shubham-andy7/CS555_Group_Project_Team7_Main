@@ -1,5 +1,128 @@
 from datetime import datetime
 from prettytable import PrettyTable
+from dateutil.relativedelta import relativedelta
+
+#User Story: 01 - Dates before current date
+def US1_dates_before_current_date(individuals, family):
+    Error01_individuals = []
+    Error01_family = []
+    for id in individuals:
+        if individuals[id]['Death']!='NA':
+            deathday = datetime.strptime(individuals[id]["Death"], "%Y-%m-%d")
+            birthday = datetime.strptime(individuals[id]["Birthday"], "%Y-%m-%d")
+            if deathday > datetime.now():
+                Error01_individuals.append(individuals[id])
+            if birthday > datetime.now():
+                Error01_individuals.append(individuals[id])
+
+    for id in family:
+        if family[id]["Divorced"] != 'NA':
+            divorceday = datetime.strptime(family[id]["Divorced"], "%Y-%m-%d")
+            marriageday = datetime.strptime(family[id]["Married"], "%Y-%m-%d")
+            if divorceday > datetime.now():
+                Error01_family.append(family[id])
+            if marriageday > datetime.now():
+                Error01_family.append(family[id])
+
+    return Error01_individuals, Error01_family
+            
+
+#User Story: 02 - Birth before marriage
+def US2_birth_before_marriage(individuals, family):
+    Error02 = {'individuals': [], 'family': []}
+
+    for id_indiv, id_family in zip(individuals, family):
+        if family[id_family]['Husband ID'] == individuals[id_indiv]['id'] or family[id_family]['Wife ID'] == individuals[id_indiv]['id']:
+            if family[id_family]['Married'] != 'NA':
+                marriageday = datetime.strptime(family[id_family]["Married"], "%Y-%m-%d")
+                birthday = datetime.strptime(individuals[id_indiv]["Birthday"], "%Y-%m-%d")
+                if birthday > marriageday:
+                    Error02['individuals'].append(individuals[id_indiv])
+                    Error02['family'].append(family[id_family])
+
+    return Error02
+
+
+#User Story: 03 - Birth before death
+def US3_birth_before_death(individuals):
+    Error03 = []
+    for id in individuals:
+        if individuals[id]["Death"] != 'NA':
+            deathday = datetime.strptime(individuals[id]["Death"], "%Y-%m-%d")
+            birthday = datetime.strptime(individuals[id]["Birthday"], "%Y-%m-%d")
+            if deathday < birthday:
+                Error03.append(individuals[id])
+    return Error03
+
+
+#User Story: 04 - Marriage before divorce
+def US4_marriage_before_divorce(family):
+    Error04 = []
+    for id in family:
+        if family[id]["Divorced"] != 'NA':
+            divorceday = datetime.strptime(family[id]["Divorced"], "%Y-%m-%d")
+            marriageday = datetime.strptime(family[id]["Married"], "%Y-%m-%d")
+            if divorceday < marriageday:
+                Error04.append(family[id])
+    return Error04
+
+
+# User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people
+def US7_Death_less_150_after_birth(individuals):
+    Error07 = []
+    current_date = datetime.now()
+    for id in individuals.keys():
+        birth = individuals[id]["Birthday"]
+        death = individuals[id]["Death"]
+        alive = individuals[id]["Alive"]
+        
+        if alive == 'False' and death != 'NA':
+            birth_date = datetime.strptime(birth, "%Y-%m-%d")
+            death_date = datetime.strptime(death, "%Y-%m-%d")
+            age_at_death = death_date.year - birth_date.year
+
+            if age_at_death > 150:
+                Error07.append(f"ERROR US07: {individuals[id]['id']} {individuals[id]['Death']} {individuals[id]['Name']} Age: {age_at_death}")
+        
+        if alive == 'True':
+            birth_date = datetime.strptime(birth, "%Y-%m-%d")
+            age = current_date.year - birth_date.year
+
+            if age > 150:
+                Error07.append(f"ERROR US07: {individuals[id]['id']} {individuals[id]['Death']} {individuals[id]['Name']} Age: {age}")
+
+    return Error07
+
+
+# User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
+def US8_child_birth_before_parent_death(family, individuals):
+    Error08 = []
+
+    for id in family:
+        mother_id = family[id]['Wife ID']
+        father_id = family[id]['Husband ID']
+        children = family[id]['Children']
+        mother_death = individuals[mother_id]['Death']
+        father_death = individuals[father_id]['Death']
+
+        if mother_death != 'NA' and children:
+            mother_death_date = datetime.strptime(mother_death, "%Y-%m-%d")
+            for child_id in children:
+                child_birth = individuals[child_id]['Birthday']
+                child_birth_date = datetime.strptime(child_birth, "%Y-%m-%d")
+                if child_birth_date > mother_death_date:
+                    Error08.append(f"ERROR US08: {individuals[child_id]['id']} {individuals[child_id]['Name']} {individuals[child_id]['Birthday']} {individuals[mother_id]['Death']} {individuals[father_id]['Death']}")
+        
+        if father_death != 'NA' and children:
+            father_death_date = datetime.strptime(father_death, "%Y-%m-%d")
+            for child_id in children:
+                child_birth = individuals[child_id]['Birthday']
+                child_birth_date = datetime.strptime(child_birth, "%Y-%m-%d")
+                if child_birth_date > father_death_date + relativedelta(months=9):
+                    Error08.append(f"ERROR US08: {individuals[child_id]['id']} {individuals[child_id]['Name']} {individuals[child_id]['Birthday']} {individuals[mother_id]['Death']} {individuals[father_id]['Death']}")
+    
+    return Error08
+
 
 #User Story 05: Marriage before death error check
 def US5_marriage_before_death(individuals, family):
@@ -219,13 +342,37 @@ if __name__ == "__main__":
         # Retrieve the Individuals and Family from the input file
         individuals, family = get_ind_fam_details(gedcomfile)
 
+        # Print The details using Pretty Table Library
+        display_gedcom_table(individuals, family)
+
+        #User Story: 01 - Dates before current date
+        Error01 = US1_dates_before_current_date(individuals, family)
+        print("Errors related to Dates before current date (US01): ", Error01)
+
+        #User Story: 02 - Birth before marriage
+        Error02 = US2_birth_before_marriage(individuals, family)
+        print("Errors related to birth before marriage (US02): ", Error02)
+
+        #User Story: 03 - Birth before death
+        Error03 = US3_birth_before_death(individuals)
+        print("Errors related to Birth before Death (US03): ", Error03)
+
+        #User Story: 04 - Marriage before divorce
+        Error04 = US4_marriage_before_divorce(family)
+        print("Errors related to Marriage before Divorce (US04): ", Error04)
+
         #User Story 05: Marriage before death
         Error05 = US5_marriage_before_death(individuals, family)
-        print("Errors related to marriage date not being before death date: ", Error05)
+        print("Errors related to marriage date not being before death date (US05): ", Error05)
 
         #User Story 06: Divorce before death
         Error06 = US6_divorce_before_death(individuals, family)
-        print("Errors related to divorce date not being before death date: ", Error06)
+        print("Errors related to divorce date not being before death date (US06): ", Error06)
 
-        # Print The details using Pretty Table Library
-        display_gedcom_table(individuals, family)
+        # User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people
+        Error07 = US7_Death_less_150_after_birth(individuals)
+        print("Errors related to death Less then 150 years after birth (US07): ", Error07)
+
+         # User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
+        Error08 = US8_child_birth_before_parent_death(family, individuals)
+        print("Errors related to Child birth before parent death (US08): ", Error08)
