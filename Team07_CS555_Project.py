@@ -2,6 +2,46 @@ from datetime import datetime
 from prettytable import PrettyTable
 from dateutil.relativedelta import relativedelta
 
+#User Story: 01 - Dates before current date
+def US1_dates_before_current_date(individuals, family):
+    Error01_individuals = []
+    Error01_family = []
+    for id in individuals:
+        if individuals[id]['Death']!='NA':
+            deathday = datetime.strptime(individuals[id]["Death"], "%Y-%m-%d")
+            birthday = datetime.strptime(individuals[id]["Birthday"], "%Y-%m-%d")
+            if deathday > datetime.now():
+                Error01_individuals.append(individuals[id])
+            if birthday > datetime.now():
+                Error01_individuals.append(individuals[id])
+
+    for id in family:
+        if family[id]["Divorced"] != 'NA':
+            divorceday = datetime.strptime(family[id]["Divorced"], "%Y-%m-%d")
+            marriageday = datetime.strptime(family[id]["Married"], "%Y-%m-%d")
+            if divorceday > datetime.now():
+                Error01_family.append(family[id])
+            if marriageday > datetime.now():
+                Error01_family.append(family[id])
+
+    return Error01_individuals, Error01_family
+            
+
+#User Story: 02 - Birth before marriage
+def US2_birth_before_marriage(individuals, family):
+    Error02 = {'individuals': [], 'family': []}
+
+    for id_indiv, id_family in zip(individuals, family):
+        if family[id_family]['Husband ID'] == individuals[id_indiv]['id'] or family[id_family]['Wife ID'] == individuals[id_indiv]['id']:
+            if family[id_family]['Married'] != 'NA':
+                marriageday = datetime.strptime(family[id_family]["Married"], "%Y-%m-%d")
+                birthday = datetime.strptime(individuals[id_indiv]["Birthday"], "%Y-%m-%d")
+                if birthday > marriageday:
+                    Error02['individuals'].append(individuals[id_indiv])
+                    Error02['family'].append(family[id_family])
+
+    return Error02
+
 
 #User Story: 03 - Birth before death
 def US3_birth_before_death(individuals):
@@ -302,24 +342,32 @@ if __name__ == "__main__":
         # Retrieve the Individuals and Family from the input file
         individuals, family = get_ind_fam_details(gedcomfile)
 
-        #User Story 05: Marriage before death
-        Error05 = US5_marriage_before_death(individuals, family)
-        print("Errors related to marriage date not being before death date: ", Error05)
-
-        #User Story 06: Divorce before death
-        Error06 = US6_divorce_before_death(individuals, family)
-        print("Errors related to divorce date not being before death date: ", Error06)
-
         # Print The details using Pretty Table Library
         display_gedcom_table(individuals, family)
 
+        #User Story: 01 - Dates before current date
+        Error01 = US1_dates_before_current_date(individuals, family)
+        print("Errors related to Dates before current date (US01): ", Error01)
+
+        #User Story: 02 - Birth before marriage
+        Error02 = US2_birth_before_marriage(individuals, family)
+        print("Errors related to birth before marriage (US02): ", Error02)
+
         #User Story: 03 - Birth before death
         Error03 = US3_birth_before_death(individuals)
-        print("Errors related to Birth before Death: ", Error03)
+        print("Errors related to Birth before Death (US03): ", Error03)
 
         #User Story: 04 - Marriage before divorce
         Error04 = US4_marriage_before_divorce(family)
-        print("Errors related to Marriage before Divorce: ", Error04)
+        print("Errors related to Marriage before Divorce (US04): ", Error04)
+
+        #User Story 05: Marriage before death
+        Error05 = US5_marriage_before_death(individuals, family)
+        print("Errors related to marriage date not being before death date (US05): ", Error05)
+
+        #User Story 06: Divorce before death
+        Error06 = US6_divorce_before_death(individuals, family)
+        print("Errors related to divorce date not being before death date (US06): ", Error06)
 
         # User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people
         Error07 = US7_Death_less_150_after_birth(individuals)
