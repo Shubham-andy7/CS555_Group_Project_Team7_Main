@@ -31,7 +31,7 @@ def US4_marriage_before_divorce(family):
 def US7_Death_less_150_after_birth(individuals):
     Error07 = []
     current_date = datetime.now()
-    for id in individuals:
+    for id in individuals.keys():
         birth = individuals[id]["Birthday"]
         death = individuals[id]["Death"]
         alive = individuals[id]["Alive"]
@@ -42,14 +42,14 @@ def US7_Death_less_150_after_birth(individuals):
             age_at_death = death_date.year - birth_date.year
 
             if age_at_death > 150:
-                Error07.append(individuals[id])
+                Error07.append(f"ERROR US07: {individuals[id]['id']} {individuals[id]['Death']} {individuals[id]['Name']} Age: {age_at_death}")
         
         if alive == 'True':
             birth_date = datetime.strptime(birth, "%Y-%m-%d")
             age = current_date.year - birth_date.year
 
             if age > 150:
-                Error07.append(individuals[id])
+                Error07.append(f"ERROR US07: {individuals[id]['id']} {individuals[id]['Death']} {individuals[id]['Name']} Age: {age}")
 
     return Error07
 
@@ -71,7 +71,7 @@ def US8_child_birth_before_parent_death(family, individuals):
                 child_birth = individuals[child_id]['Birthday']
                 child_birth_date = datetime.strptime(child_birth, "%Y-%m-%d")
                 if child_birth_date > mother_death_date:
-                    Error08.append(individuals[child_id])
+                    Error08.append(f"ERROR US08: {individuals[child_id]['id']} {individuals[child_id]['Name']} {individuals[child_id]['Birthday']} {individuals[mother_id]['Death']} {individuals[father_id]['Death']}")
         
         if father_death != 'NA' and children:
             father_death_date = datetime.strptime(father_death, "%Y-%m-%d")
@@ -79,7 +79,7 @@ def US8_child_birth_before_parent_death(family, individuals):
                 child_birth = individuals[child_id]['Birthday']
                 child_birth_date = datetime.strptime(child_birth, "%Y-%m-%d")
                 if child_birth_date > father_death_date + relativedelta(months=9):
-                    Error08.append(individuals[child_id])
+                    Error08.append(f"ERROR US08: {individuals[child_id]['id']} {individuals[child_id]['Name']} {individuals[child_id]['Birthday']} {individuals[mother_id]['Death']} {individuals[father_id]['Death']}")
     
     return Error08
 
