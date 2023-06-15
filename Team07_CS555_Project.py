@@ -29,16 +29,17 @@ def US1_dates_before_current_date(individuals, family):
 #User Story: 02 - Birth before marriage
 def US2_birth_before_marriage(individuals, family):
     Error02 = {'individuals': [], 'family': []}
-
-    for id_indiv, id_family in zip(individuals, family):
-        if family[id_family]['Husband ID'] == individuals[id_indiv]['id'] or family[id_family]['Wife ID'] == individuals[id_indiv]['id']:
-            if family[id_family]['Married'] != 'NA':
-                marriageday = datetime.strptime(family[id_family]["Married"], "%Y-%m-%d")
-                birthday = datetime.strptime(individuals[id_indiv]["Birthday"], "%Y-%m-%d")
-                if birthday > marriageday:
-                    Error02['individuals'].append(individuals[id_indiv])
-                    Error02['family'].append(family[id_family])
-
+    for id_indiv in individuals:
+        indiv = individuals[id_indiv]
+        spouse_id = indiv['Spouse'].strip("{}'")  # Extract spouse ID from the string
+        if spouse_id in family:
+            fam = family[spouse_id]
+            if fam['Married'] != 'NA':
+                marriageday = datetime.strptime(fam['Married'], "%Y-%m-%d")
+                birthday = datetime.strptime(indiv['Birthday'], "%Y-%m-%d")
+                if birthday.date() > marriageday.date():
+                    Error02['individuals'].append(indiv)
+                    Error02['family'].append(fam)
     return Error02
 
 #User Story: 03 - Birth before death
@@ -330,7 +331,7 @@ def display_gedcom_table(individuals, family):
 
 
 if __name__ == "__main__":
-    with open("Shubham_Gedcome.ged", "r") as gedcomf:
+    with open("Test_Shubham_Gedcom.ged", "r") as gedcomf:
         gedcomfile = gedcomf.readlines()
         gedcomfile = [line.rstrip('\n') for line in gedcomfile]
 
