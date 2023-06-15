@@ -334,41 +334,52 @@ if __name__ == "__main__":
     with open("Test_Shubham_Gedcom.ged", "r") as gedcomf:
         gedcomfile = gedcomf.readlines()
         gedcomfile = [line.rstrip('\n') for line in gedcomfile]
-
+        output = ""
         # Retrieve the Individuals and Family from the input file
         individuals, family = get_ind_fam_details(gedcomfile)
 
         # Print The details using Pretty Table Library
         display_gedcom_table(individuals, family)
 
-        #User Story: 01 - Dates before current date
+        # User Story: 01 - Dates before current date
         Error01 = US1_dates_before_current_date(individuals, family)
-        print("Errors related to Dates before current date (US01): ", Error01)
+        output += "User Story: 01 - Dates before current date\n\nErrors related to Dates before current date (US01)\n: " + str(Error01) + "\n\n" + "These are the details for either of the birthdates, deathdates, marriagedates and divorcedates that have occured after the current date." + "\n"
+        output+= "------------------------------------------------------------------------------\n\n"
 
-        #User Story: 02 - Birth before marriage
+        # User Story: 02 - Birth before marriage
         Error02 = US2_birth_before_marriage(individuals, family)
-        print("Errors related to birth before marriage (US02): ", Error02)
+        output += "User Story: 02 - Birth before marriage\n\nErrors related to birth before marriage (US02)\n: " + str(Error02) + "\n\n" + "These are the details for birth dates that have occured after the marriage date of an individual." + "\n"
+        output+= "------------------------------------------------------------------------------\n\n"
 
-        #User Story: 03 - Birth before death
+        # User Story: 03 - Birth before death
         Error03 = US3_birth_before_death(individuals)
-        print("Errors related to Birth before Death (US03): ", Error03)
+        output += "User Story: 03 - Birth before death\n\nErrors related to Birth before Death (US03)\n: " + str(Error03) + "\n\n" + "These are the details for birth dates that have occured after the death date of an individual." + "\n"
+        output+= "------------------------------------------------------------------------------\n\n"
 
-        #User Story: 04 - Marriage before divorce
+        # User Story: 04 - Marriage before divorce
         Error04 = US4_marriage_before_divorce(family)
-        print("Errors related to Marriage before Divorce (US04): ", Error04)
+        output += "User Story: 04 - Marriage before divorce\n\nErrors related to Marriage before Divorce (US04)\n: " + str(Error04) + "\n\n" + "These are the details for marriage dates that have occured after the divorce date of an individual." + "\n"
+        output+= "------------------------------------------------------------------------------\n\n"
 
-        #User Story 05: Marriage before death
+        # User Story 05: Marriage before death
         Error05 = US5_marriage_before_death(individuals, family)
-        print("Errors related to marriage date not being before death date (US05): ", Error05)
+        output += "User Story 05: Marriage before death\n\nErrors related to marriage date not being before death date (US05)\n: " + str(Error05) + "\n\n" + "These are the details for marriage dates that have occured after the death date of an individual." + "\n"
+        output+= "------------------------------------------------------------------------------\n\n"
 
-        #User Story 06: Divorce before death
+        # User Story 06: Divorce before death
         Error06 = US6_divorce_before_death(individuals, family)
-        print("Errors related to divorce date not being before death date (US06): ", Error06)
+        output += "User Story 06: Divorce before death\n\nErrors related to divorce date not being before death date (US06)\n: " + str(Error06) + "\n\n" + "These are the details for divorce dates that have occured after the death date of an individual." + "\n"
+        output+= "------------------------------------------------------------------------------\n\n"
 
         # User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people
         Error07 = US7_Death_less_150_after_birth(individuals)
-        print("Errors related to death Less then 150 years after birth (US07): ", Error07)
+        output += "User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people\n\nErrors related to death Less then 150 years after birth (US07)\n: " + str(Error07) + "\n\n" + "These are the details for dead people who had age more than 150 years or alive people with current age more than 150 years." + "\n"
+        output+= "------------------------------------------------------------------------------\n\n"
 
          # User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
         Error08 = US8_child_birth_before_parent_death(family, individuals)
-        print("Errors related to Child birth before parent death (US08): ", Error08)
+        output += "User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father\n\nErrors related to Child birth before parent death (US08)\n: " + str(Error08) + "\n\n" + "These are the details for child who were born after 9 months of death of father or after death of mother." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        with open("M4B2_Sprint1_Ouput.txt", "w") as out:
+            out.write(output)
