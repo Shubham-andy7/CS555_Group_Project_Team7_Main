@@ -26,7 +26,6 @@ def US1_dates_before_current_date(individuals, family):
 
     return Error01_individuals, Error01_family
             
-
 #User Story: 02 - Birth before marriage
 def US2_birth_before_marriage(individuals, family):
     Error02 = {'individuals': [], 'family': []}
@@ -42,7 +41,6 @@ def US2_birth_before_marriage(individuals, family):
 
     return Error02
 
-
 #User Story: 03 - Birth before death
 def US3_birth_before_death(individuals):
     Error03 = []
@@ -53,7 +51,6 @@ def US3_birth_before_death(individuals):
             if deathday < birthday:
                 Error03.append(individuals[id])
     return Error03
-
 
 #User Story: 04 - Marriage before divorce
 def US4_marriage_before_divorce(family):
@@ -66,6 +63,41 @@ def US4_marriage_before_divorce(family):
                 Error04.append(family[id])
     return Error04
 
+#User Story 05: Marriage before death error check
+def US5_marriage_before_death(individuals, family):
+    Error05 = []
+    for id in family:
+        if family[id]['Married'] != 'NA':
+            marriage_date = datetime.strptime(family[id]['Married'], "%Y-%m-%d")
+            husband_id = family[id]['Husband ID']
+            wife_id = family[id]['Wife ID']
+            if individuals[husband_id]['Death'] != 'NA':
+                husband_dday = datetime.strptime(individuals[husband_id]['Death'], "%Y-%m-%d")
+                if husband_dday < marriage_date:
+                    Error05.append(individuals[husband_id])
+            if individuals[wife_id]['Death'] != 'NA':
+                wife_dday = datetime.strptime(individuals[wife_id]['Death'], "%Y-%m-%d")
+                if wife_dday < marriage_date:
+                    Error05.append(individuals[wife_id])
+    return Error05
+
+#User Story 06: Divorce before death error check
+def US6_divorce_before_death(individuals, family):
+    Error06 = []
+    for id in family:
+        if family[id]['Divorced'] != 'NA':
+            divorced_date = datetime.strptime(family[id]['Divorced'], "%Y-%m-%d")
+            husband_id = family[id]['Husband ID']
+            wife_id = family[id]['Wife ID']
+            if individuals[husband_id]['Death'] != 'NA':
+                husband_dday = datetime.strptime(individuals[husband_id]['Death'], "%Y-%m-%d")
+                if husband_dday < divorced_date:
+                    Error06.append(individuals[husband_id])
+            if individuals[wife_id]['Death'] != 'NA':
+                wife_dday = datetime.strptime(individuals[wife_id]['Death'], "%Y-%m-%d")
+                if wife_dday < divorced_date:
+                    Error06.append(individuals[wife_id])
+    return Error06
 
 # User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people
 def US7_Death_less_150_after_birth(individuals):
@@ -122,43 +154,6 @@ def US8_child_birth_before_parent_death(family, individuals):
                     Error08.append(f"ERROR US08: {individuals[child_id]['id']} {individuals[child_id]['Name']} {individuals[child_id]['Birthday']} {individuals[mother_id]['Death']} {individuals[father_id]['Death']}")
     
     return Error08
-
-
-#User Story 05: Marriage before death error check
-def US5_marriage_before_death(individuals, family):
-    Error05 = []
-    for id in family:
-        if family[id]['Married'] != 'NA':
-            marriage_date = datetime.strptime(family[id]['Married'], "%Y-%m-%d")
-            husband_id = family[id]['Husband ID']
-            wife_id = family[id]['Wife ID']
-            if individuals[husband_id]['Death'] != 'NA':
-                husband_dday = datetime.strptime(individuals[husband_id]['Death'], "%Y-%m-%d")
-                if husband_dday < marriage_date:
-                    Error05.append(individuals[husband_id])
-            if individuals[wife_id]['Death'] != 'NA':
-                wife_dday = datetime.strptime(individuals[wife_id]['Death'], "%Y-%m-%d")
-                if wife_dday < marriage_date:
-                    Error05.append(individuals[wife_id])
-    return Error05
-
-#User Story 06: Divorce before death error check
-def US6_divorce_before_death(individuals, family):
-    Error06 = []
-    for id in family:
-        if family[id]['Divorced'] != 'NA':
-            divorced_date = datetime.strptime(family[id]['Divorced'], "%Y-%m-%d")
-            husband_id = family[id]['Husband ID']
-            wife_id = family[id]['Wife ID']
-            if individuals[husband_id]['Death'] != 'NA':
-                husband_dday = datetime.strptime(individuals[husband_id]['Death'], "%Y-%m-%d")
-                if husband_dday < divorced_date:
-                    Error06.append(individuals[husband_id])
-            if individuals[wife_id]['Death'] != 'NA':
-                wife_dday = datetime.strptime(individuals[wife_id]['Death'], "%Y-%m-%d")
-                if wife_dday < divorced_date:
-                    Error06.append(individuals[wife_id])
-    return Error06
 
 def get_ind_fam_details(gedcomfile):
     individuals = []
