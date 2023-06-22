@@ -184,6 +184,61 @@ def US10_marriage_after_14(family, individuals):
                 Error10.append(tmp)
     return Error10
 
+# User Story: 11 - No bigamy: Marriage should not occur during marriage to another spouse
+def US11_No_Bigamy(family, individuals):
+    Error11 = []
+    marriage_dates = {}
+    widowed_flag = 0
+    for fam_id in family:
+        husband_id = family[fam_id]['Husband ID']
+        wife_id = family[fam_id]['Wife ID']
+        if family[fam_id]['Divorced'] == 'NA':
+            if individuals[husband_id]['Death'] != 'NA':
+                husband_death = individuals[husband_id]['Death']
+                if husband_death:
+                    widowed_flag = 1
+        if husband_id in marriage_dates and marriage_dates[husband_id] >= family[fam_id]['Married']:
+            Error11.append(f"ERROR US11: Bigamy detected for husband {husband_id} in family {fam_id}")
+        if wife_id in marriage_dates and marriage_dates[wife_id] >= family[fam_id]['Married'] and widowed_flag==0:
+            Error11.append(f"ERROR US11: Bigamy detected for wife {wife_id} in family {fam_id}")
+        marriage_dates[husband_id] = family[fam_id]['Married']
+        marriage_dates[wife_id] = family[fam_id]['Married']
+
+    return Error11
+
+# User Story: 12 - Parents not too old: Mother should be less than 60 years older than her children and father should be less than 80 years older than his children
+
+def US12_Parents_not_too_old(family, individuals):
+    Error12 = []
+    child_ids = []
+    for id in family:
+        father_id = family[id]['Husband ID']
+        mother_id = family[id]['Wife ID']
+        child_ids = family[id]['Children']
+
+        if individuals[father_id]['Alive'] == 'False':
+            date = datetime.strptime(individuals[father_id]['Death'], "%Y-%m-%d")
+        else:
+            date = datetime.now()
+        father_age = date.year - datetime.strptime(individuals[father_id]['Birthday'], "%Y-%m-%d").year
+
+        if individuals[mother_id]['Alive'] == 'False':
+            date = datetime.strptime(individuals[mother_id]['Death'], "%Y-%m-%d")
+        else:
+            date = datetime.now()
+        mother_age = date.year - datetime.strptime(individuals[mother_id]['Birthday'], "%Y-%m-%d").year
+
+        for child in child_ids:
+            if individuals[child]['Alive'] == 'False':
+                date = datetime.strptime(individuals[child]['Death'], "%Y-%m-%d")
+            else:
+                date = datetime.now()
+            child_age = date.year - datetime.strptime(individuals[child]['Birthday'], "%Y-%m-%d").year
+
+            if father_age - 80 > child_age or mother_age - 60 > child_age:
+                Error12.append(f"Child {child} has parents too old to him")
+            
+    return Error12
 
 # User Story: 15 - Fewer than 15 siblings: There should be fewer than 15 siblings in a family
 
@@ -444,17 +499,27 @@ if __name__ == "__main__":
 
         # User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
         Error10 = US10_marriage_after_14(family, individuals)
-        output += "#User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)\n\nErrors related to Parents married under 14 years (US10)\n: " + str(Error10) + "\n\n" + "These are the details for who were married below 14 years." + "\n"
+        output += "User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)\n\nErrors related to Parents married under 14 years (US10)\n: " + str(Error10) + "\n\n" + "These are the details for who were married below 14 years." + "\n"
         output+= "------------------------------------------------------------------------------"
 
+        # User Story: 11 - No bigamy: Marriage should not occur during marriage to another spouse
+        Error11 = US11_No_Bigamy(family, individuals)
+        output += "User Story: 11 - No bigamy: Marriage should not occur during marriage to another spouse\n\nErrors related to Bigamy (US11):\n" + str(Error11) + "\n\n" + "These are errors related to Bigamy." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        # User Story: 12 - Parents not too old: Mother should be less than 60 years older than her children and father should be less than 80 years older than his children
+        Error12 = US12_Parents_not_too_old(family, individuals)
+        output += "User Story: 12 - Parents not too old: Mother should be less than 60 years older than her children and father should be less than 80 years older than his children\n\nErrors related to Too old parents (US12):\n" + str(Error12) + "\n\n" + "These are errors related to Parents who are too old to their child." + "\n"
+        output+= "------------------------------------------------------------------------------"
+        
         # User Story: 15 - Fewer than 15 siblings: There should be fewer than 15 siblings in a family
         Error15 = US15_Fewer_than_15_siblings(family)
-        output += "User Story: 15 - There should be fewer than 15 siblings in a family\n\nErrors related to more than 15 siblings (US15)\n: " + str(Error08) + "\n\n" + "These are the details of fewer than 15 siblings in a family." + "\n"
+        output += "User Story: 15 - There should be fewer than 15 siblings in a family\n\nErrors related to more than 15 siblings (US15)\n: " + str(Error15) + "\n\n" + "These are the details of fewer than 15 siblings in a family." + "\n"
         output+= "------------------------------------------------------------------------------"
 
         # User Story: 16 - Male last name: All male members of a family should have the same last name
         Error16 = US16_Male_Last_Name(individuals, family)
-        output += "User Story: 16 - All male members of a family should have the same last name\n\nErrors related to All male members of a family should have the same last name (US16)\n: " + str(Error08) + "\n\n" + "These are the details of All male members of a family should have the same last name." + "\n"
+        output += "User Story: 16 - All male members of a family should have the same last name\n\nErrors related to All male members of a family should have the same last name (US16)\n: " + str(Error16) + "\n\n" + "These are the details of All male members of a family should have the same last name." + "\n"
         output+= "------------------------------------------------------------------------------"
 
         with open("M4B3_Sprint1_Ouput.txt", "w") as out:
