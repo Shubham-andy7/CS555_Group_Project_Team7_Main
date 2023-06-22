@@ -1,0 +1,81 @@
+User Story: 01 - Dates before current date
+
+Errors related to Dates before current date (US01)
+: ([{'id': 'I8', 'Name': 'Tyler', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '3011-07-16', 'Death': '1979-11-04', 'Alive': 'False', 'Child': "{'F5'}", 'Spouse': "{'F2'}", 'Age': -1032}], [])
+
+These are the details for either of the birthdates, deathdates, marriagedates and divorcedates that have occured after the current date.
+------------------------------------------------------------------------------
+
+User Story: 02 - Birth before marriage
+
+Errors related to birth before marriage (US02)
+: {'individuals': [{'id': 'I8', 'Name': 'Tyler', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '3011-07-16', 'Death': '1979-11-04', 'Alive': 'False', 'Child': "{'F5'}", 'Spouse': "{'F2'}", 'Age': -1032}], 'family': [{'id': 'F2', 'Husband ID': 'I8', 'Husband Name': 'Tyler', 'Husband Lastname': 'Roberts', 'Wife ID': 'I9', 'Wife Name': 'Jenny', 'Wife Lastname': 'Gilbert', 'Married': '1939-02-26', 'Divorced': 'NA', 'Children': ['I1', 'I10', 'I15']}]}
+
+These are the details for birth dates that have occured after the marriage date of an individual.
+------------------------------------------------------------------------------
+
+User Story: 03 - Birth before death
+
+Errors related to Birth before Death (US03)
+: [{'id': 'I8', 'Name': 'Tyler', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '3011-07-16', 'Death': '1979-11-04', 'Alive': 'False', 'Child': "{'F5'}", 'Spouse': "{'F2'}", 'Age': -1032}]
+
+These are the details for birth dates that have occured after the death date of an individual.
+------------------------------------------------------------------------------
+
+User Story: 04 - Marriage before divorce
+
+Errors related to Marriage before Divorce (US04)
+: [{'id': 'F4', 'Husband ID': 'I5', 'Husband Name': 'Andy', 'Husband Lastname': 'Raonic', 'Wife ID': 'I3', 'Wife Name': 'Jenifer', 'Wife Lastname': 'Roberts', 'Married': '2020-06-12', 'Divorced': '2015-04-30', 'Children': ['I6']}]
+
+These are the details for marriage dates that have occured after the divorce date of an individual.
+------------------------------------------------------------------------------
+
+User Story 05: Marriage before death
+
+Errors related to marriage date not being before death date (US05)
+: [{'id': 'I1', 'Name': 'Allen', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '1940-01-01', 'Death': '2011-05-06', 'Alive': 'False', 'Child': "{'F2'}", 'Spouse': "{'F1'}", 'Age': 71}]
+
+These are the details for marriage dates that have occured after the death date of an individual.
+------------------------------------------------------------------------------
+
+User Story 06: Divorce before death
+
+Errors related to divorce date not being before death date (US06)
+: [{'id': 'I15', 'Name': 'Lewis', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '1982-05-04', 'Death': '2008-04-15', 'Alive': 'False', 'Child': "{'F2'}", 'Spouse': "{'F8'}", 'Age': 25}]
+
+These are the details for divorce dates that have occured after the death date of an individual.
+------------------------------------------------------------------------------
+
+User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people
+
+Errors related to death Less then 150 years after birth (US07)
+: ['ERROR US07: I18 2001-08-06 Tahila Age: 151']
+
+These are the details for dead people who had age more than 150 years or alive people with current age more than 150 years.
+------------------------------------------------------------------------------
+
+User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
+
+Errors related to Child birth before parent death (US08)
+: ['ERROR US08: I15 Lewis 1982-05-04 1982-01-02 1979-11-04', 'ERROR US08: I15 Lewis 1982-05-04 1982-01-02 1979-11-04', 'ERROR US08: I8 Tyler 3011-07-16 2001-08-06 1900-03-02', 'ERROR US08: I8 Tyler 3011-07-16 2001-08-06 1900-03-02']
+
+These are the details for child who were born after 9 months of death of father or after death of mother.
+------------------------------------------------------------------------------#User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
+
+Errors related to Parents married under 14 years (US10)
+: [[{'id': 'F2', 'Husband ID': 'I8', 'Husband Name': 'Tyler', 'Husband Lastname': 'Roberts', 'Wife ID': 'I9', 'Wife Name': 'Jenny', 'Wife Lastname': 'Gilbert', 'Married': '1939-02-26', 'Divorced': 'NA', 'Children': ['I1', 'I10', 'I15']}, 'I9', 'I8'], [{'id': 'F8', 'Husband ID': 'I15', 'Husband Name': 'Lewis', 'Husband Lastname': 'Roberts', 'Wife ID': 'I16', 'Wife Name': 'Laura', 'Wife Lastname': 'Julliet', 'Married': '2000-08-07', 'Divorced': '2019-10-10', 'Children': []}, 'I16', 'I15']]
+
+These are the details for who were married below 14 years.
+------------------------------------------------------------------------------User Story: 15 - There should be fewer than 15 siblings in a family
+
+Errors related to more than 15 siblings (US15)
+: ['ERROR US08: I15 Lewis 1982-05-04 1982-01-02 1979-11-04', 'ERROR US08: I15 Lewis 1982-05-04 1982-01-02 1979-11-04', 'ERROR US08: I8 Tyler 3011-07-16 2001-08-06 1900-03-02', 'ERROR US08: I8 Tyler 3011-07-16 2001-08-06 1900-03-02']
+
+These are the details of fewer than 15 siblings in a family.
+------------------------------------------------------------------------------User Story: 16 - All male members of a family should have the same last name
+
+Errors related to All male members of a family should have the same last name (US16)
+: ['ERROR US08: I15 Lewis 1982-05-04 1982-01-02 1979-11-04', 'ERROR US08: I15 Lewis 1982-05-04 1982-01-02 1979-11-04', 'ERROR US08: I8 Tyler 3011-07-16 2001-08-06 1900-03-02', 'ERROR US08: I8 Tyler 3011-07-16 2001-08-06 1900-03-02']
+
+These are the details of All male members of a family should have the same last name.
+------------------------------------------------------------------------------

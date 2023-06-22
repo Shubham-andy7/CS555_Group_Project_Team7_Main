@@ -184,6 +184,32 @@ def US10_marriage_after_14(family, individuals):
                 Error10.append(tmp)
     return Error10
 
+
+# User Story: 15 - Fewer than 15 siblings: There should be fewer than 15 siblings in a family
+
+def US15_Fewer_than_15_siblings(family):
+    Error15 = []
+    for fam_id in family.keys():
+        if "Children" in family[fam_id]:
+            num_siblings = len(family[fam_id]["Children"])
+            print(num_siblings)
+            if num_siblings >= 15:
+                Error15.append(f"ERROR US15: {fam_id} has {num_siblings} siblings, which is more than 15.")
+    return Error15
+
+# User Story: 16 - Male last name: All male members of a family should have the same last name
+
+def US16_Male_Last_Name(individuals, family):
+    Error16 = []
+    for fam_id in family.keys():
+        if "Husband ID" in family[fam_id]:
+            father_last_name = family[fam_id]["Husband Lastname"]
+            if "Children" in family[fam_id]:
+                for child_id in family[fam_id]["Children"]:
+                    if individuals[child_id]["Gender"] == "M" and individuals[child_id]["Lastname"] != father_last_name:
+                        Error16.append(f"ERROR US16: {individuals[child_id]['Name']} has a different last name: {individuals[child_id]['Lastname']} than the father's last name: {father_last_name}")
+    return Error16
+
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
@@ -230,15 +256,19 @@ def get_ind_fam_details(gedcomfile):
                 id = detail[1]
                 indidict[f'{id}'] = {'id': id}
                 indidict[f'{id}']['Name'] = detail
+                indidict[f'{id}']['Lastname'] = 'NA'
                 indidict[f'{id}']['Gender'] = 'NA'
                 indidict[f'{id}']['Birthday'] = 'NA'
                 indidict[f'{id}']['Death'] = 'NA'
                 indidict[f'{id}']['Alive'] = 'False'
                 indidict[f'{id}']['Child'] = 'NA'
                 indidict[f'{id}']['Spouse'] = 'NA'
-            elif 'NAME' in person[details]:
-                detail = person[details].replace('1 NAME ', '')
+            elif 'GIVN' in person[details]:
+                detail = person[details].replace('2 GIVN ', '')
                 indidict[f'{id}']['Name'] = detail
+            elif 'SURN' in person[details]:
+                detail = person[details].replace('2 SURN ', '')
+                indidict[f'{id}']['Lastname'] = detail
             elif 'SEX' in person[details]:
                 detail = person[details].split(' ')
                 indidict[f'{id}']['Gender'] = detail[2]
@@ -294,8 +324,10 @@ def get_ind_fam_details(gedcomfile):
                 famdict[f'{id}'] = {'id': id}
                 famdict[f'{id}']['Husband ID'] = 'NA'
                 famdict[f'{id}']['Husband Name'] = 'NA'
+                famdict[f'{id}']['Husband Lastname'] = 'NA'
                 famdict[f'{id}']['Wife ID'] = 'NA'
                 famdict[f'{id}']['Wife Name'] = 'NA'
+                famdict[f'{id}']['Wife Lastname'] = 'NA'
                 famdict[f'{id}']['Married'] = 'NA'
                 famdict[f'{id}']['Divorced'] = 'NA'
                 famdict[f'{id}']['Children'] = [] 
@@ -304,16 +336,17 @@ def get_ind_fam_details(gedcomfile):
                 husbid = detail[1]
                 famdict[f'{id}']['Husband ID'] = husbid
                 famdict[f'{id}']['Husband Name'] = indidict.get(husbid, {}).get('Name', 'Unknown')
+                famdict[f'{id}']['Husband Lastname'] = indidict.get(husbid, {}).get('Lastname', 'Unknown')
             elif 'WIFE' in fam[details]:
                 detail = fam[details].split('@')
                 wifeid = detail[1]
                 famdict[f'{id}']['Wife ID'] = wifeid
                 famdict[f'{id}']['Wife Name'] = indidict.get(wifeid, {}).get('Name', 'Unknown')
+                famdict[f'{id}']['Wife Lastname'] = indidict.get(wifeid, {}).get('Lastname', 'Unknown')
             elif 'CHIL' in fam[details]:
                 detail = fam[details].split('@')
                 childid = detail[1]
-                famdict[f'{id}']['Children'].append(childid)
-            
+                famdict[f'{id}']['Children'].append(childid)            
             elif 'MARR' in fam[details]:
                 next = details + 1
                 if 'DATE' in fam[next]:
@@ -342,7 +375,7 @@ def display_gedcom_table(individuals, family):
     output_tables = ""
     with open('M3_B2_output.txt','w') as output:
         inditable = PrettyTable()
-        inditable.field_names = ['ID', 'Name', 'Gender', 'Birthday', 'Death', 'Alive', 'Child', 'Spouse', 'Age']
+        inditable.field_names = ['ID', 'Name', 'Lastname', 'Gender', 'Birthday', 'Death', 'Alive', 'Child', 'Spouse', 'Age']
         for i in individuals.keys():
             inditable.add_row(list(individuals[i].values()))
         output_tables += 'Individuals:' + '\n' + str(inditable) + '\n'
@@ -350,7 +383,7 @@ def display_gedcom_table(individuals, family):
         #print(family)
         #Print Families table
         famtable = PrettyTable()
-        famtable.field_names = ['ID', 'Husband ID', 'Husband Name', 'Wife ID', 'Wife Name', 'Married', 'Divorced', 'Children']
+        famtable.field_names = ['ID', 'Husband ID', 'Husband Name', 'Husband Lastname', 'Wife ID', 'Wife Name', 'Wife Lastname', 'Married', 'Divorced', 'Children']
         for i in family.keys():
             famtable.add_row(list(family[i].values()))
         output_tables += 'Families:' + '\n' + str(famtable) + '\n'
@@ -404,14 +437,25 @@ if __name__ == "__main__":
         output += "User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people\n\nErrors related to death Less then 150 years after birth (US07)\n: " + str(Error07) + "\n\n" + "These are the details for dead people who had age more than 150 years or alive people with current age more than 150 years." + "\n"
         output+= "------------------------------------------------------------------------------\n\n"
 
-         # User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
+        # User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
         Error08 = US8_child_birth_before_parent_death(family, individuals)
         output += "User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father\n\nErrors related to Child birth before parent death (US08)\n: " + str(Error08) + "\n\n" + "These are the details for child who were born after 9 months of death of father or after death of mother." + "\n"
         output+= "------------------------------------------------------------------------------"
 
-        #User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
+        # User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
         Error10 = US10_marriage_after_14(family, individuals)
         output += "#User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)\n\nErrors related to Parents married under 14 years (US10)\n: " + str(Error10) + "\n\n" + "These are the details for who were married below 14 years." + "\n"
         output+= "------------------------------------------------------------------------------"
+
+        # User Story: 15 - Fewer than 15 siblings: There should be fewer than 15 siblings in a family
+        Error15 = US15_Fewer_than_15_siblings(family)
+        output += "User Story: 15 - There should be fewer than 15 siblings in a family\n\nErrors related to more than 15 siblings (US15)\n: " + str(Error08) + "\n\n" + "These are the details of fewer than 15 siblings in a family." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        # User Story: 16 - Male last name: All male members of a family should have the same last name
+        Error16 = US16_Male_Last_Name(individuals, family)
+        output += "User Story: 16 - All male members of a family should have the same last name\n\nErrors related to All male members of a family should have the same last name (US16)\n: " + str(Error08) + "\n\n" + "These are the details of All male members of a family should have the same last name." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
         with open("M4B3_Sprint1_Ouput.txt", "w") as out:
             out.write(output)
