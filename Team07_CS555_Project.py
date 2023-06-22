@@ -156,6 +156,26 @@ def US8_child_birth_before_parent_death(family, individuals):
     
     return Error08
 
+#User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
+def US10_marriage_after_14(family, individuals):
+    Error10 = []
+
+    for id in family:
+        
+        if family[id]['Married'] != 'NA':
+            marriage_date = datetime.strptime(family[id]['Married'], "%Y-%m-%d")
+            mother_id = family[id]['Wife ID']
+            father_id = family[id]['Husband ID']
+            mother_bday = datetime.strptime(individuals[mother_id]['Birthday'], "%Y-%m-%d")
+            father_bday = datetime.strptime(individuals[father_id]['Birthday'], "%Y-%m-%d")
+            mother_age_at_marriage = relativedelta(marriage_date, mother_bday).years
+            if mother_age_at_marriage < 14:
+                Error10.append(family[id]['Wife ID'])
+            father_age_at_marriage = relativedelta(marriage_date, father_bday).years
+            if father_age_at_marriage < 14:
+                Error10.append(family[id]['Husband ID'])
+    return Error10
+
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
@@ -381,5 +401,9 @@ if __name__ == "__main__":
         output += "User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father\n\nErrors related to Child birth before parent death (US08)\n: " + str(Error08) + "\n\n" + "These are the details for child who were born after 9 months of death of father or after death of mother." + "\n"
         output+= "------------------------------------------------------------------------------"
 
-        with open("M4B2_Sprint1_Ouput.txt", "w") as out:
+        #User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
+        Error10 = US10_marriage_after_14(family, individuals)
+        output += "#User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)\n\nErrors related to Parents married under 14 years (US10)\n: " + str(Error10) + "\n\n" + "These are the details for who were married below 14 years." + "\n"
+        output+= "------------------------------------------------------------------------------"
+        with open("M4B3_Sprint1_Ouput.txt", "w") as out:
             out.write(output)
