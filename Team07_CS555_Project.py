@@ -170,10 +170,18 @@ def US10_marriage_after_14(family, individuals):
             father_bday = datetime.strptime(individuals[father_id]['Birthday'], "%Y-%m-%d")
             mother_age_at_marriage = relativedelta(marriage_date, mother_bday).years
             if mother_age_at_marriage < 14:
-                Error10.append(family[id]['Wife ID'])
+                tmp = []
+                tmp.append(family[id])
+                tmp.append(family[id]['Wife ID'])
+                tmp.append(family[id]['Husband ID'])
+                Error10.append(tmp)
             father_age_at_marriage = relativedelta(marriage_date, father_bday).years
             if father_age_at_marriage < 14:
-                Error10.append(family[id]['Husband ID'])
+                tmp = []
+                tmp.append(family[id])
+                tmp.append(family[id]['Wife ID'])
+                tmp.append(family[id]['Husband ID'])
+                Error10.append(tmp)
     return Error10
 
 def get_ind_fam_details(gedcomfile):
