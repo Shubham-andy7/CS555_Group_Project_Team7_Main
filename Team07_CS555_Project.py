@@ -240,6 +240,59 @@ def US12_Parents_not_too_old(family, individuals):
             
     return Error12
 
+#User Story: 13 - Birth dates of siblings should be more than 8 months apart or less than 2 days apart (twins may be born one day apart, e.g. 11:59 PM and 12:02 AM the following calendar day)
+def US13_siblings_spacing(individuals, family):
+    Error13 = []
+
+    for id in family:
+        child_ids = family[id]['Children']
+
+        if len(child_ids) > 1:
+            children = []
+            for i in range(len(child_ids)):
+                children.append(individuals[child_ids[i]])
+            for i in range(len(children)):
+                j = i+1
+                child = children[i]
+                for j in range(len(children)):
+                    sibling = children[j]
+                    child_birth = datetime.strptime(child['Birthday'], "%Y-%m-%d")
+                    sibling_birth = datetime.strptime(sibling['Birthday'], "%Y-%m-%d")
+                    birthdelta = relativedelta(child_birth, sibling_birth).days
+                    birthdelta2 = relativedelta(child_birth, sibling_birth).months
+                    if 1 < birthdelta:
+                       if birthdelta2 < 8:
+                        Error13.append("Sibling birthdays should be less than 2 days apart or greater than 8 months apart.\n Child IDs with Error:" + str(child_ids))
+    return Error13
+
+#User Story: 14 - No more than five siblings should be born at the same time
+def US14_multiple_births_less_than_5(individuals, family):
+    Error14 = []
+
+    for id in family:
+        child_ids = family[id]['Children']
+
+        if len(child_ids) > 0:
+            children = {}
+            for i in range(len(child_ids)):
+                children.update(individuals[child_ids[i]])
+            birthdays = []
+            for i in range(len(children)):
+                birthdays.append(children['Birthday'])
+            birthdays.sort(key=lambda date: datetime.strptime(date, "%Y-%m-%d"))
+            birthdays = [datetime.strptime(birthday, '%Y-%m-%d') for birthday in birthdays]
+            count = 0
+            for i in range(len(birthdays)):
+                compare_date = birthdays[i]
+                day_range = 2
+                birthdays_in_range = []
+                for birthday in birthdays:
+                    if compare_date - relativedelta(days=day_range) <= birthday <= compare_date + relativedelta(days=day_range):
+                        birthdays_in_range.append(birthday)
+                    if len(birthdays_in_range) > 0:
+                        Error14.append("No more than five siblings should be born at the same time.\n Child IDs with Error:" + str(child_ids))
+    return Error14
+
 # User Story: 15 - Fewer than 15 siblings: There should be fewer than 15 siblings in a family
 
 def US15_Fewer_than_15_siblings(family):
@@ -512,6 +565,16 @@ if __name__ == "__main__":
         output += "User Story: 12 - Parents not too old: Mother should be less than 60 years older than her children and father should be less than 80 years older than his children\n\nErrors related to Too old parents (US12):\n" + str(Error12) + "\n\n" + "These are errors related to Parents who are too old to their child." + "\n"
         output+= "------------------------------------------------------------------------------"
         
+        # User Story: 13 - Birth dates of siblings should be more than 8 months apart or less than 2 days apart (twins may be born one day apart, e.g. 11:59 PM and 12:02 AM the following calendar day)
+        Error13 = US13_siblings_spacing(individuals, family)
+        output += "User Story: 13 - Birth dates of siblings should be more than 8 months apart or less than 2 days apart (twins may be born one day apart, e.g. 11:59 PM and 12:02 AM the following calendar day)\n\nErrors related to siblings birthday too close (US13):\n" + str(Error13) + "\n\n" + "These errors are related to siblings whose birthdays are too close together." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        #User Story: 14 - No more than five siblings should be born at the same time
+        Error14 = US14_multiple_births_less_than_5(individuals, family)
+        output += "User Story: 14 - No more than five siblings should be born at the same time\n\nErrors related to more than five siblings being born at the same time:\n" + str(Error14) + "\n\n" + "These errors are related to more than five siblings being born at the same time, exceeding the reasonable limit." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
         # User Story: 15 - Fewer than 15 siblings: There should be fewer than 15 siblings in a family
         Error15 = US15_Fewer_than_15_siblings(family)
         output += "User Story: 15 - There should be fewer than 15 siblings in a family\n\nErrors related to more than 15 siblings (US15)\n: " + str(Error15) + "\n\n" + "These are the details of fewer than 15 siblings in a family." + "\n"
