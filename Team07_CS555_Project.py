@@ -156,6 +156,25 @@ def US8_child_birth_before_parent_death(family, individuals):
     
     return Error08
 
+
+#User Story: 09 - Birth before marriage of parents
+
+
+def US09_birth_before_death_of_parents(family, individuals):
+    Error09 = []
+    for id in family:
+        mother_id = family[id]['Wife Id']
+        father_id = family[id]['Husband Id']
+        children = family[id]['Children']
+        marriage_date = datetime.strptime(family[id]['Married'], "%Y-%m-%d")
+        for child_id in children:
+            child_birth = individuals[child_id]['Birthday']
+            child_birth_date = datetime.strptime(child_birth, '%Y-%m-%d')
+            if child_birth_date < marriage_date:
+                Error09.append(f"ERROR US09: {individuals[child_id]['id']} {individuals[child_id]['Name']} {individuals[child_id]['Birthday']}")
+    return Error09
+    
+
 #User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
 def US10_marriage_after_14(family, individuals):
     Error10 = []
