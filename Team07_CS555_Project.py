@@ -160,7 +160,7 @@ def US8_child_birth_before_parent_death(family, individuals):
 #User Story: 09 - Birth before marriage of parents
 
 
-def US09_birth_before_death_of_parents(family, individuals):
+def US09_birth_before_marriage_of_parents(family, individuals):
     Error09 = []
     for id in family:
         mother_id = family[id]['Wife Id']
@@ -567,6 +567,11 @@ if __name__ == "__main__":
         # User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
         Error08 = US8_child_birth_before_parent_death(family, individuals)
         output += "User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father\n\nErrors related to Child birth before parent death (US08)\n: " + str(Error08) + "\n\n" + "These are the details for child who were born after 9 months of death of father or after death of mother." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+         # User Story: 09 - Child should be born after the marriage of parents
+        Error09 = US09_birth_before_marriage_of_parents(family, individuals)
+        output += "User Story: 09 - Child should be born after the marriage of parents\n\nErrors related to Child birth before parents marriage (US09)\n: " + str(Error09) + "\n\n" + "These are the details for child who were born before the marriage of parents" + "\n"
         output+= "------------------------------------------------------------------------------"
 
         # User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
