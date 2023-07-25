@@ -337,6 +337,49 @@ def US16_Male_Last_Name(individuals, family):
                         Error16.append(f"ERROR US16: {individuals[child_id]['Name']} has a different last name: {individuals[child_id]['Lastname']} than the father's last name: {father_last_name}")
     return Error16
 
+#User Story: 21 - Correct gender for role: Husband in family should be male and wife in family should be female
+def US21_correct_gender_for_role(individuals, family):
+    Error21 = []
+    for family_id in family.keys():
+        husband_id = family[family_id]["Husband ID"]
+        wife_id = family[family_id]["Wife ID"]
+        if individuals[husband_id]["Gender"] != "M":
+            Error21.append("Husband ID " + str(husband_id) + "has the incorrect gender role.")
+        if individuals[wife_id]["Gender"] != "F":
+            Error21.append("Wife ID " + str(wife_id) + "has the incorrect gender role.")
+    return Error21
+
+#User Story: 22 - Unique IDs: All individual IDs should be unique and all family IDs should be unique
+def US22_unique_IDs(individuals, family):
+    Error22 = []
+    for id in family:
+        compare_id = id
+        count = 0
+        duplicates = []
+        for id in family:
+            if id == compare_id:
+                count += 1
+        if count > 1:
+            if compare_id in duplicates:
+                pass
+            else:
+                Error22.append("Family ID " + str(compare_id) + " is a duplicate.")
+                duplicates.append(compare_id)
+    for id in individuals:
+        compare_id = id
+        count = 0
+        duplicates = []
+        for id in individuals:
+            if id == compare_id:
+                count += 1
+        if count > 1:
+            if compare_id in duplicates:
+                pass
+            else:
+                Error22.append("Individual ID " + str(compare_id) + " is a duplicate.")
+                duplicates.append(compare_id)
+    return Error22
+
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
@@ -608,6 +651,14 @@ if __name__ == "__main__":
         Error16 = US16_Male_Last_Name(individuals, family)
         output += "User Story: 16 - All male members of a family should have the same last name\n\nErrors related to All male members of a family should have the same last name (US16)\n: " + str(Error16) + "\n\n" + "These are the details of All male members of a family should have the same last name." + "\n"
         output+= "------------------------------------------------------------------------------"
+
+        # User Story: 21 - Correct gender for role
+        Error21 = US21_correct_gender_for_role(individuals, family)
+        output += "User Story: 21 - Husband in family should be male and wife in family should be female\n\nErrors related to incorrect gender for roles:\n" + str(Error21) + "\n\n" + "These errors are for either a father or mother having the incorrect gender." + "\n"
+
+        # User Story: 22 - Unique IDs
+        Error22 = US22_unique_IDs(individuals, family)
+        output += "User Story: 22 - All individual IDs should be unique and all family IDs should be unique\n\nErrors related to duplicate IDs:\n" + str(Error22) + "\n\n" + "These errors are for duplicate family or individual IDs." + "\n"
 
         with open("M4B3_Sprint1_Ouput.txt", "w") as out:
             out.write(output)
