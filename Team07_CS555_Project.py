@@ -380,6 +380,55 @@ def US22_unique_IDs(individuals, family):
                 duplicates.append(compare_id)
     return Error22
 
+#User Story: 23 Unique name and birth date: No more than one individual with the same name and birth date should appear in a GEDCOM file
+def US23_Unique_Name_and_Birth_Date(individuals):
+    unique_ids = {}  # Dictionary to store the combination of name and birth date as unique identifiers
+    Error23 = []
+
+    for ind_id in individuals:
+        
+        name = individuals[ind_id]['Name']
+        birth_date = individuals[ind_id]['Birthday']
+
+        # Create a unique identifier by concatenating the name and birth date
+        identifier = f"{name}|{birth_date}"
+
+        if identifier in unique_ids:
+            # If the identifier is already present in the dictionary, it indicates a duplicate
+            # Add an error message to the error_list
+            
+            Error23.append(f"ERROR US23: individual found with same name {name} and birth date {birth_date}")
+            
+        # Add the identifier to the dictionary to keep track of encountered individuals
+        unique_ids[identifier] = ind_id
+
+    return Error23
+
+# User Story: 24: Unique families by spouses: No more than one family with the same spouses by name and the same marriage date should appear in a GEDCOM file
+def US24_Unique_Families_by_Spouses(family):
+    unique_families = {}  # Dictionary to store the combination of spouses' names and marriage dates as unique identifiers
+    Error24 = []
+
+    for fam_id in family:
+        husband_name = family[fam_id]['Husband Name']
+        wife_name = family[fam_id]['Wife Name']
+        marriage_date = family[fam_id]['Married']
+
+        # Create a unique identifier by concatenating the spouses' names and marriage date
+        identifier = f"{husband_name}|{wife_name}|{marriage_date}"
+
+        if identifier in unique_families:
+            # If the identifier is already present in the dictionary, it indicates a duplicate
+            # Add an error message to the error_list
+            Error24.append(f"ERROR US24: Duplicate family found with spouses {husband_name} and {wife_name} " +
+                              f"and marriage date {marriage_date}")
+
+        # Add the identifier to the dictionary to keep track of encountered families
+        unique_families[identifier] = fam_id
+
+    return Error24
+
+
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
@@ -660,5 +709,15 @@ if __name__ == "__main__":
         Error22 = US22_unique_IDs(individuals, family)
         output += "User Story: 22 - All individual IDs should be unique and all family IDs should be unique\n\nErrors related to duplicate IDs:\n" + str(Error22) + "\n\n" + "These errors are for duplicate family or individual IDs." + "\n"
 
+        #User Story 23: Unique name and birth date: No more than one individual with the same name and birth date should appear in a GEDCOM file
+        Error23 = US23_Unique_Name_and_Birth_Date(individuals)
+        output += "User Story: 23 - No more than one individual with the same name and birth date\n\nErrors related to No more than one individual with the same name and birth date(US23)\n: " + str(Error23) + "\n\n" + "These are the details of No more than one individual with the same name and birth date." + "\n"
+        output+= "------------------------------------------------------------------------------"
+        
+        # User Story 24: Unique families by spouses: No more than one family with the same spouses by name and the same marriage date should appear in a GEDCOM file
+        Error24 = US24_Unique_Families_by_Spouses(family)
+        output += "User Story: 24 - No more than one family with the same spouses by name and the same marriage date \n\nErrors related to No more than one family with the same spouses by name and the same marriage date(US24)\n: " + str(Error23) + "\n\n" + "These are the details of No more than one family with the same spouses by name and the same marriage date ." + "\n"
+        output+= "------------------------------------------------------------------------------"
+                
         with open("M4B3_Sprint1_Ouput.txt", "w") as out:
             out.write(output)
