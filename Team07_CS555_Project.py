@@ -160,11 +160,9 @@ def US8_child_birth_before_parent_death(family, individuals):
 #User Story: 09 - Birth before marriage of parents
 
 
-def US09_birth_before_marriage_of_parents(family, individuals):
+def US09_birth_before_death_of_parents(family, individuals):
     Error09 = []
     for id in family:
-        mother_id = family[id]['Wife Id']
-        father_id = family[id]['Husband Id']
         children = family[id]['Children']
         marriage_date = datetime.strptime(family[id]['Married'], "%Y-%m-%d")
         for child_id in children:
@@ -189,18 +187,10 @@ def US10_marriage_after_14(family, individuals):
             father_bday = datetime.strptime(individuals[father_id]['Birthday'], "%Y-%m-%d")
             mother_age_at_marriage = relativedelta(marriage_date, mother_bday).years
             if mother_age_at_marriage < 14:
-                tmp = []
-                tmp.append(family[id])
-                tmp.append(family[id]['Wife ID'])
-                tmp.append(family[id]['Husband ID'])
-                Error10.append(tmp)
+                Error10.append(family[id]['Wife ID'])
             father_age_at_marriage = relativedelta(marriage_date, father_bday).years
             if father_age_at_marriage < 14:
-                tmp = []
-                tmp.append(family[id])
-                tmp.append(family[id]['Wife ID'])
-                tmp.append(family[id]['Husband ID'])
-                Error10.append(tmp)
+                Error10.append(family[id]['Husband ID'])
     return Error10
 
 # User Story: 11 - No bigamy: Marriage should not occur during marriage to another spouse
@@ -271,17 +261,14 @@ def US13_siblings_spacing(individuals, family):
             for i in range(len(child_ids)):
                 children.append(individuals[child_ids[i]])
             for i in range(len(children)):
-                j = i+1
-                child = children[i]
-                for j in range(len(children)):
+                for j in range(i + 1, len(children)):
+                    child = children[i]
                     sibling = children[j]
                     child_birth = datetime.strptime(child['Birthday'], "%Y-%m-%d")
                     sibling_birth = datetime.strptime(sibling['Birthday'], "%Y-%m-%d")
-                    birthdelta = relativedelta(child_birth, sibling_birth).days
-                    birthdelta2 = relativedelta(child_birth, sibling_birth).months
-                    if 1 < birthdelta:
-                       if birthdelta2 < 8:
-                        Error13.append("Sibling birthdays should be less than 2 days apart or greater than 8 months apart.\n Child IDs with Error:" + str(child_ids))
+                    birthdelta = relativedelta(child_birth, sibling_birth)
+                    if birthdelta.days > 2 or (birthdelta.days == 2 and birthdelta.seconds > 0) or birthdelta.months < 8:
+                        Error13.append("Sibling birthdays should be less than 2 days apart or greater than 8 months apart.\nChild IDs with Error: " + str(child_ids))
     return Error13
 
 #User Story: 14 - No more than five siblings should be born at the same time
@@ -308,10 +295,10 @@ def US14_multiple_births_less_than_5(individuals, family):
                 for birthday in birthdays:
                     if compare_date - relativedelta(days=day_range) <= birthday <= compare_date + relativedelta(days=day_range):
                         birthdays_in_range.append(birthday)
-                    if len(birthdays_in_range) > 0:
-                        Error14.append("No more than five siblings should be born at the same time.\n Child IDs with Error:" + str(child_ids))
+                if len(birthdays_in_range) > 5:
+                    Error14.append("No more than five siblings should be born at the same time.\n Child IDs with Error: " + str(child_ids))
+                    break
     return Error14
-
 # User Story: 15 - Fewer than 15 siblings: There should be fewer than 15 siblings in a family
 
 def US15_Fewer_than_15_siblings(family):
@@ -490,7 +477,6 @@ def US21_correct_gender_for_role(individuals, family):
     for family_id in family.keys():
         husband_id = family[family_id]["Husband ID"]
         wife_id = family[family_id]["Wife ID"]
-        print(husband_id)
         if individuals[husband_id]["Gender"] != "M":
             Error21.append("Husband ID " + str(husband_id) + "has the incorrect gender role.")
         if individuals[wife_id]["Gender"] != "F":
@@ -575,7 +561,6 @@ def US24_Unique_Families_by_Spouses(family):
         unique_families[identifier] = fam_id
 
     return Error24
-
 
 def get_ind_fam_details(gedcomfile):
     individuals = []
@@ -809,11 +794,6 @@ if __name__ == "__main__":
         output += "User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father\n\nErrors related to Child birth before parent death (US08)\n: " + str(Error08) + "\n\n" + "These are the details for child who were born after 9 months of death of father or after death of mother." + "\n"
         output+= "------------------------------------------------------------------------------"
 
-         # User Story: 09 - Child should be born after the marriage of parents
-        #Error09 = US09_birth_before_marriage_of_parents(family, individuals)
-        #output += "User Story: 09 - Child should be born after the marriage of parents\n\nErrors related to Child birth before parents marriage (US09)\n: " + str(Error09) + "\n\n" + "These are the details for child who were born before the marriage of parents" + "\n"
-        output+= "------------------------------------------------------------------------------"
-
         # User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
         Error10 = US10_marriage_after_14(family, individuals)
         output += "User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)\n\nErrors related to Parents married under 14 years (US10)\n: " + str(Error10) + "\n\n" + "These are the details for who were married below 14 years." + "\n"
@@ -849,6 +829,7 @@ if __name__ == "__main__":
         output += "User Story: 16 - All male members of a family should have the same last name\n\nErrors related to All male members of a family should have the same last name (US16)\n: " + str(Error16) + "\n\n" + "These are the details of All male members of a family should have the same last name." + "\n"
         output+= "------------------------------------------------------------------------------"
 
+        
         #User Story: 19 - First cousins should not marry: First cousins should not marry one another
 
         Error19 = US19_First_Cousin_should_not_marry(family, individuals)
@@ -880,6 +861,9 @@ if __name__ == "__main__":
         Error24 = US24_Unique_Families_by_Spouses(family)
         output += "User Story: 24 - No more than one family with the same spouses by name and the same marriage date \n\nErrors related to No more than one family with the same spouses by name and the same marriage date(US24)\n: " + str(Error23) + "\n\n" + "These are the details of No more than one family with the same spouses by name and the same marriage date ." + "\n"
         output+= "------------------------------------------------------------------------------"
-                
+
         with open("M4B3_Sprint1_Ouput.txt", "w") as out:
             out.write(output)
+
+        print(family)
+        print(individuals)
