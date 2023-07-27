@@ -22,6 +22,8 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
         self.family7 = {'F1': {'id': 'F1', 'Husband ID': 'I1', 'Husband Name': 'Allen', 'Husband Lastname': 'Roberts', 'Wife ID': 'I2', 'Wife Name': 'Julie', 'Wife Lastname': 'Jefferson', 'Married': '2012-10-08', 'Divorced': 'NA', 'Children': ['I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14','I15', 'I16', 'I17', 'I18', 'I19', 'I20']}}
         self.family8 = {'F1': {'id': 'F1', 'Husband ID': 'I1', 'Husband Name': 'Allen', 'Husband Lastname': 'Bairstow', 'Wife ID': 'I2', 'Wife Name': 'Julie', 'Wife Lastname': 'Jefferson', 'Married': '2012-10-08', 'Divorced': 'NA', 'Children': ['I19']}}
         self.individuals11 = {'I1': {'id': 'I1', 'Name': 'Jhonny', 'Lastname': 'Bairstow', 'Gender': 'M', 'Birthday': '1900-03-02', 'Death': 'NA', 'Alive': 'True', 'Child': "{'F1'}", 'Spouse': 'NA', 'Age': 123}, 'I19': {'id': 'I19', 'Name': 'Jhonny', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '1900-03-02', 'Death': 'NA', 'Alive': 'True', 'Child': "{'F5'}", 'Spouse': 'NA', 'Age': 123}}
+        self.family9 = {'F1': {'id': 'F1', 'Husband ID': 'I1', 'Husband Name': 'Allen', 'Husband Lastname': 'Roberts', 'Wife ID': 'I2', 'Wife Name': 'Julie', 'Wife Lastname': 'Jefferson', 'Married': '2012-10-08', 'Divorced': 'NA', 'Children': ['I3']},'F2': {'id': 'F1', 'Husband ID': 'I1', 'Husband Name': 'Allen', 'Husband Lastname': 'Roberts', 'Wife ID': 'I4', 'Wife Name': 'Honey', 'Wife Lastname': 'Jefferson', 'Married': '2012-10-08', 'Divorced': 'NA', 'Children': ['I3']}}
+        self.individuals12 = {'I3': {'id': 'I3', 'Name': 'Julie /Jefferson/', 'Gender': 'M', 'Birthday': '2011-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "{'F1'}", 'Age': 73}}
     def test_US9_1(self):
         Error01= US09_birth_before_death_of_parents(self.family1, self.individuals1)
         self.assertEqual(Error01, ['ERROR US09: I3 Julie /Jefferson/ 2011-10-08'])
@@ -70,8 +72,21 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
         Error12 = US16_Male_Last_Name(self.individuals11, self.family8)
         self.assertEqual(Error12, ["ERROR US16: Jhonny has a different last name: Roberts than the father's last name: Bairstow"])
     
+    def test_US21_1(self):
+        Error21 = US21_correct_gender_for_role(self.individuals1, self.family1)
+        self.assertEqual(Error21, [])
     
-    
+    def test_US21_2(self):
+        Error21 = US21_correct_gender_for_role(self.individuals12, self.family9)
+        self.assertEqual(Error21, [])
+
+    def test_US22_1(self):
+        Error22 = US22_unique_IDs(self.individuals12, self.family9)
+        self.assertEqual(Error22, [])
+
+    def test_US22_2(self):
+        Error22 = US22_unique_IDs(self.individuals1, self.family1)
+        self.assertEqual(Error22, [])
     
 if __name__ == '__main__':
     unittest.main()

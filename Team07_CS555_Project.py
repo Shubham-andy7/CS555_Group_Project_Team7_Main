@@ -343,6 +343,7 @@ def US21_correct_gender_for_role(individuals, family):
     for family_id in family.keys():
         husband_id = family[family_id]["Husband ID"]
         wife_id = family[family_id]["Wife ID"]
+        print(husband_id)
         if individuals[husband_id]["Gender"] != "M":
             Error21.append("Husband ID " + str(husband_id) + "has the incorrect gender role.")
         if individuals[wife_id]["Gender"] != "F":
@@ -662,8 +663,8 @@ if __name__ == "__main__":
         output+= "------------------------------------------------------------------------------"
 
          # User Story: 09 - Child should be born after the marriage of parents
-        Error09 = US09_birth_before_marriage_of_parents(family, individuals)
-        output += "User Story: 09 - Child should be born after the marriage of parents\n\nErrors related to Child birth before parents marriage (US09)\n: " + str(Error09) + "\n\n" + "These are the details for child who were born before the marriage of parents" + "\n"
+        #Error09 = US09_birth_before_marriage_of_parents(family, individuals)
+        #output += "User Story: 09 - Child should be born after the marriage of parents\n\nErrors related to Child birth before parents marriage (US09)\n: " + str(Error09) + "\n\n" + "These are the details for child who were born before the marriage of parents" + "\n"
         output+= "------------------------------------------------------------------------------"
 
         # User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
@@ -704,10 +705,12 @@ if __name__ == "__main__":
         # User Story: 21 - Correct gender for role
         Error21 = US21_correct_gender_for_role(individuals, family)
         output += "User Story: 21 - Husband in family should be male and wife in family should be female\n\nErrors related to incorrect gender for roles:\n" + str(Error21) + "\n\n" + "These errors are for either a father or mother having the incorrect gender." + "\n"
+        output+= "------------------------------------------------------------------------------"
 
         # User Story: 22 - Unique IDs
         Error22 = US22_unique_IDs(individuals, family)
         output += "User Story: 22 - All individual IDs should be unique and all family IDs should be unique\n\nErrors related to duplicate IDs:\n" + str(Error22) + "\n\n" + "These errors are for duplicate family or individual IDs." + "\n"
+        output+= "------------------------------------------------------------------------------"
 
         #User Story 23: Unique name and birth date: No more than one individual with the same name and birth date should appear in a GEDCOM file
         Error23 = US23_Unique_Name_and_Birth_Date(individuals)
