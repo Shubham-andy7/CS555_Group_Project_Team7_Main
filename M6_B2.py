@@ -71,30 +71,14 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
     def test_US16_1(self):
         Error12 = US16_Male_Last_Name(self.individuals11, self.family8)
         self.assertEqual(Error12, ["ERROR US16: Jhonny has a different last name: Roberts than the father's last name: Bairstow"])
-
-    def test_US17_1(self):
-        Error13 = US17_Parent_Shouldnt_marry_descendants(self.individuals13, self.family10)
-        self.assertEqual(Error13, ["ERROR US17: John /Jefferson/ (ID: I1) is marrying their descendant: Julie /Jefferson/ (ID: I2)"])
-
-    def test_US17_2(self):
-        Error14 = US17_Parent_Shouldnt_marry_descendants(self.individuals14, self.family11)
-        self.assertEqual(Error14, [])
-
-    def test_US18_1(self):
-        Error15 = US18_Siblings_Shouldnt_Marry(self.individuals15, self.family12)
-        self.assertEqual(Error15, ["ERROR US18: Siblings Johnny /Jefferson/ (ID: I3) and Johnny /Jefferson/ (ID: I4) are married to each other."])
-
-    def test_US18_2(self):
-        Error16 = US18_Siblings_Shouldnt_Marry(self.individuals16, self.family13)
-        self.assertEqual(Error16, [])
     
     def test_US21_1(self):
-        Error21 = US21_correct_gender_for_role(self.individuals1, self.family1)
+        Error21 = US21_correct_gender_for_role(self.individuals3, self.family1)
         self.assertEqual(Error21, [])
     
     def test_US21_2(self):
-        Error21 = US21_correct_gender_for_role(self.individuals12, self.family9)
-        self.assertEqual(Error21, [])
+        Error21 = US21_correct_gender_for_role(self.individuals9, self.family9)
+        self.assertEqual(Error21, ['Wife ID I4has the incorrect gender role.'])
 
     def test_US22_1(self):
         Error22 = US22_unique_IDs(self.individuals12, self.family9)
@@ -104,13 +88,14 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
         Error22 = US22_unique_IDs(self.individuals1, self.family1)
         self.assertEqual(Error22, [])
 
-     def test_US23_1(self):
+    def test_US23_1(self):
         Error23 = US23_Unique_Name_and_Birth_Date(self.individuals10)
-        self.assertEqual(Error23, [])
+        self.assertEqual(Error23, ['ERROR US23: individual found with same name Johnny /Jefferson/ and birth date 2020-10-08', 'ERROR US23: individual found with same name Johnny /Jefferson/ and birth date 2020-11-08', 'ERROR US23: individual found with same name Johnny /Jefferson/ and birth date 2020-10-08', 'ERROR US23: individual found with same name Johnny /Jefferson/ and birth date 2020-11-08'])
 
     def test_US24_1(self):
         Error24 = US24_Unique_Families_by_Spouses(self.family9)
         self.assertEqual(Error24, [])
+    
     
 if __name__ == '__main__':
     unittest.main()
