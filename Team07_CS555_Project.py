@@ -390,6 +390,99 @@ def US18_Siblings_Shouldnt_Marry(individuals, family):
     
     return Error18
 
+def is_sibling(individual_1, individual_2, family):
+    if not individual_1 or not individual_2:
+        return False
+
+    father_1_id = eval(individual_1.get('Spouse', 'NA'))
+    mother_1_id = eval(individual_1.get('Child', 'NA'))
+    father_2_id = eval(individual_2.get('Spouse', 'NA'))
+    mother_2_id = eval(individual_2.get('Child', 'NA'))
+
+    if not father_1_id or not mother_1_id or not father_2_id or not mother_2_id:
+        return False
+
+    return (father_1_id == father_2_id) and (mother_1_id == mother_2_id)
+
+
+NA = 'NA'
+
+def is_sibling(individual_1, individual_2, family):
+    if not individual_1 or not individual_2:
+        return False
+
+    father_1_id = eval(individual_1.get('Spouse', NA))
+    mother_1_id = eval(individual_1.get('Child', NA))
+    father_2_id = eval(individual_2.get('Spouse', NA))
+    mother_2_id = eval(individual_2.get('Child', NA))
+
+    if not father_1_id or not mother_1_id or not father_2_id or not mother_2_id:
+        return False
+
+    return (father_1_id == father_2_id) and (mother_1_id == mother_2_id)
+
+
+# User Story: 19 - First cousins should not marry: First cousins should not marry one another
+def US19_First_Cousin_should_not_marry(family, individuals):
+    Error19 = []
+
+    for family_info in family.values():
+        children = family_info.get('Children', [])
+        if len(children) > 1:
+            for i in range(len(children)):
+                for j in range(i + 1, len(children)):
+                    cousin_1_id = children[i]
+                    cousin_2_id = children[j]
+
+                    individual_1 = individuals.get(cousin_1_id, {})
+                    individual_2 = individuals.get(cousin_2_id, {})
+
+                    if is_sibling(individual_1, individual_2, family):
+                        Error19.append((cousin_1_id, cousin_2_id))
+
+    return Error19
+
+
+# User Story: 20 - Aunts and uncles: Aunts and uncles should not marry their nieces or nephews
+def US20_Aunts_and_uncles(individuals, family):
+    Error20 = []
+
+    for fam_info in family.values():
+        aunts_uncles_ids = set()
+
+        for child_id in fam_info.get('chil', []):
+            child_info = individuals.get(child_id[0], {})
+            if not child_info:
+                continue
+
+            parents = child_info.get('Spouse', NA)
+            if parents != NA:
+                parents_ids = eval(parents)
+                aunts_uncles_ids.update(parents_ids)
+
+        husb_id = fam_info.get('husbId', [None])[0]
+        wife_id = fam_info.get('wifeId', [None])[0]
+
+        if husb_id:
+            aunts_uncles_ids.discard(husb_id)
+        if wife_id:
+            aunts_uncles_ids.discard(wife_id)
+
+        for aunt_uncle_id in aunts_uncles_ids:
+            nieces_nephews_ids = []
+            for fam_id, fam in family.items():
+                if fam_id == fam_info['id']:
+                    continue
+
+                for child_id in fam.get('chil', []):
+                    if child_id[0] == aunt_uncle_id:
+                        nieces_nephews_ids.append(aunt_uncle_id)
+                        break
+
+            for niece_nephew_id in nieces_nephews_ids:
+                Error20.append((aunt_uncle_id, niece_nephew_id))
+
+    return Error20
 
 #User Story: 21 - Correct gender for role: Husband in family should be male and wife in family should be female
 def US21_correct_gender_for_role(individuals, family):
@@ -754,6 +847,18 @@ if __name__ == "__main__":
         # User Story: 16 - Male last name: All male members of a family should have the same last name
         Error16 = US16_Male_Last_Name(individuals, family)
         output += "User Story: 16 - All male members of a family should have the same last name\n\nErrors related to All male members of a family should have the same last name (US16)\n: " + str(Error16) + "\n\n" + "These are the details of All male members of a family should have the same last name." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        #User Story: 19 - First cousins should not marry: First cousins should not marry one another
+
+        Error19 = US19_First_Cousin_should_not_marry(family, individuals)
+        output += "User Story: 19 - First cousins should not marry: First cousins should not marry one another\n\n(US19)\n: " + str(Error19) + "\n\n" + "These are the details of all first cousins who are married" + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        #User Story: 20 - Aunts and uncles: Aunts and uncles should not marry their nieces or nephews
+
+        Error20 = US20_Aunts_and_uncles(family, individuals)
+        output += "User Story: 20 - Aunts and uncles: Aunts and uncles should not marry their nieces or nephews\n\n(US20)\n: " + str(Error20) + "\n\n" + "These are the details of all uncles and aunts who are married to their nieces or nephews" + "\n"
         output+= "------------------------------------------------------------------------------"
 
         # User Story: 21 - Correct gender for role
