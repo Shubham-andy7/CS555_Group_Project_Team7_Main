@@ -87,6 +87,14 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
     def test_US22_2(self):
         Error22 = US22_unique_IDs(self.individuals1, self.family1)
         self.assertEqual(Error22, [])
+
+     def test_US23_1(self):
+        Error23 = US23_Unique_Name_and_Birth_Date(self.individuals10)
+        self.assertEqual(Error23, [])
+
+    def test_US24_1(self):
+        Error24 = US24_Unique_Families_by_Spouses(self.family9)
+        self.assertEqual(Error24, [])
     
 if __name__ == '__main__':
     unittest.main()
