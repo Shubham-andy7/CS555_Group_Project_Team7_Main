@@ -337,6 +337,60 @@ def US16_Male_Last_Name(individuals, family):
                         Error16.append(f"ERROR US16: {individuals[child_id]['Name']} has a different last name: {individuals[child_id]['Lastname']} than the father's last name: {father_last_name}")
     return Error16
 
+
+# User Story: 17 - Parents should not marry any of their descendants
+def US17_Parent_Shouldnt_marry_descendants(individuals, family):
+    Error17 = []
+
+    def is_spouse_descendant(person_id, spouse_id):
+        if person_id not in individuals or spouse_id not in individuals:
+            return False
+        if spouse_id in individuals[person_id]['Children']:
+            return True
+        for child_id in individuals[person_id]['Children']:
+            if is_spouse_descendant(child_id, spouse_id):
+                return True
+        return False
+
+    for fam_id, family_data in family.items():
+        if "Husband ID" in family_data and "Children" in family_data:
+            husband_id = family_data["Husband ID"]
+            children = family_data["Children"]
+            for child_id in children:
+                # Check if the husband (father) is marrying one of their descendants (children)
+                if child_id == husband_id or is_spouse_descendant(husband_id, child_id):
+                    Error17.append(f"ERROR US17: {individuals[husband_id]['Name']} (ID: {husband_id}) is marrying their descendant: {individuals[child_id]['Name']} (ID: {child_id})")
+        
+        if "Wife ID" in family_data and "Children" in family_data:
+            wife_id = family_data["Wife ID"]
+            children = family_data["Children"]
+            for child_id in children:
+                # Check if the wife (mother) is marrying one of their descendants (children)
+                if child_id == wife_id or is_spouse_descendant(wife_id, child_id):
+                    Error17.append(f"ERROR US17: {individuals[wife_id]['Name']} (ID: {wife_id}) is marrying their descendant: {individuals[child_id]['Name']} (ID: {child_id})")
+    
+    return Error17
+
+# User Story: 18 - Siblings should not marry one another
+def US18_Siblings_Shouldnt_Marry(individuals, family):
+    Error18 = []
+
+    for fam_id, family_data in family.items():
+        if "Children" in family_data:
+            children = family_data["Children"]
+            for i in range(len(children)):
+                for j in range(i + 1, len(children)):
+                    sibling1_id = children[i]
+                    sibling2_id = children[j]
+                    if sibling1_id in individuals and sibling2_id in individuals:
+                        sibling1_parents = (individuals[sibling1_id].get("Husband ID"), individuals[sibling1_id].get("Wife ID"))
+                        sibling2_parents = (individuals[sibling2_id].get("Husband ID"), individuals[sibling2_id].get("Wife ID"))
+                        if sibling1_parents == sibling2_parents and sibling1_parents != ("NA", "NA"):
+                            Error18.append(f"ERROR US18: Siblings {individuals[sibling1_id]['Name']} (ID: {sibling1_id}) and {individuals[sibling2_id]['Name']} (ID: {sibling2_id}) are married to each other.")
+    
+    return Error18
+
+
 #User Story: 21 - Correct gender for role: Husband in family should be male and wife in family should be female
 def US21_correct_gender_for_role(individuals, family):
     Error21 = []
