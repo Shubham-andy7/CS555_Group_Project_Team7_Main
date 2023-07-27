@@ -332,9 +332,9 @@ def US17_Parent_Shouldnt_marry_descendants(individuals, family):
     def is_spouse_descendant(person_id, spouse_id):
         if person_id not in individuals or spouse_id not in individuals:
             return False
-        if spouse_id in individuals[person_id]['Children']:
+        if spouse_id in individuals[person_id]['Child']:
             return True
-        for child_id in individuals[person_id]['Children']:
+        for child_id in individuals[person_id]['Child']:
             if is_spouse_descendant(child_id, spouse_id):
                 return True
         return False
@@ -829,7 +829,16 @@ if __name__ == "__main__":
         output += "User Story: 16 - All male members of a family should have the same last name\n\nErrors related to All male members of a family should have the same last name (US16)\n: " + str(Error16) + "\n\n" + "These are the details of All male members of a family should have the same last name." + "\n"
         output+= "------------------------------------------------------------------------------"
 
-        
+        # User Story: 17 - No marriages to descendants: Parents should not marry any of their descendants
+        Error17 = US17_Parent_Shouldnt_marry_descendants(individuals, family)
+        output += "User Story: 17 - Parents should not marry any of their descendants\n\nErrors related to marriage to descendants:\n" + str(Error17) + "\n\n" + "These are the parents identified as married to descendants." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        # User Story: 18 - Siblings should not marry: Siblings should not marry one another
+        Error18 = US18_Siblings_Shouldnt_Marry(individuals, family)
+        output += "User Story: 18 - Siblings should not marry one another\n\nErrors related to siblings marrying each other:\n" + str(Error18) + "\n\n" + "These are the siblings who are married to each other." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
         #User Story: 19 - First cousins should not marry: First cousins should not marry one another
 
         Error19 = US19_First_Cousin_should_not_marry(family, individuals)

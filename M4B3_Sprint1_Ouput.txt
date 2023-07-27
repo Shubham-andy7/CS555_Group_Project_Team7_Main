@@ -1,0 +1,153 @@
+User Story: 01 - Dates before current date
+
+Errors related to Dates before current date (US01)
+: ([{'id': 'I8', 'Name': 'Tyler', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '3011-07-16', 'Death': '1979-11-04', 'Alive': 'False', 'Child': "{'F5'}", 'Spouse': "{'F2'}", 'Age': -1032}], [])
+
+These are the details for either of the birthdates, deathdates, marriagedates and divorcedates that have occured after the current date.
+------------------------------------------------------------------------------
+
+User Story: 02 - Birth before marriage
+
+Errors related to birth before marriage (US02)
+: {'individuals': [{'id': 'I8', 'Name': 'Tyler', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '3011-07-16', 'Death': '1979-11-04', 'Alive': 'False', 'Child': "{'F5'}", 'Spouse': "{'F2'}", 'Age': -1032}], 'family': [{'id': 'F2', 'Husband ID': 'I8', 'Husband Name': 'Tyler', 'Husband Lastname': 'Roberts', 'Wife ID': 'I9', 'Wife Name': 'Jenny', 'Wife Lastname': 'Gilbert', 'Married': '1939-02-26', 'Divorced': 'NA', 'Children': ['I1', 'I10', 'I15']}]}
+
+These are the details for birth dates that have occured after the marriage date of an individual.
+------------------------------------------------------------------------------
+
+User Story: 03 - Birth before death
+
+Errors related to Birth before Death (US03)
+: [{'id': 'I8', 'Name': 'Tyler', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '3011-07-16', 'Death': '1979-11-04', 'Alive': 'False', 'Child': "{'F5'}", 'Spouse': "{'F2'}", 'Age': -1032}]
+
+These are the details for birth dates that have occured after the death date of an individual.
+------------------------------------------------------------------------------
+
+User Story: 04 - Marriage before divorce
+
+Errors related to Marriage before Divorce (US04)
+: [{'id': 'F4', 'Husband ID': 'I5', 'Husband Name': 'Andy', 'Husband Lastname': 'Raonic', 'Wife ID': 'I3', 'Wife Name': 'Jenifer', 'Wife Lastname': 'Roberts', 'Married': '2020-06-12', 'Divorced': '2015-04-30', 'Children': ['I6']}]
+
+These are the details for marriage dates that have occured after the divorce date of an individual.
+------------------------------------------------------------------------------
+
+User Story 05: Marriage before death
+
+Errors related to marriage date not being before death date (US05)
+: [{'id': 'I1', 'Name': 'Allen', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '1940-01-01', 'Death': '2011-05-06', 'Alive': 'False', 'Child': "{'F2'}", 'Spouse': "{'F1'}", 'Age': 71}]
+
+These are the details for marriage dates that have occured after the death date of an individual.
+------------------------------------------------------------------------------
+
+User Story 06: Divorce before death
+
+Errors related to divorce date not being before death date (US06)
+: [{'id': 'I15', 'Name': 'Lewis', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '1982-05-04', 'Death': '2008-04-15', 'Alive': 'False', 'Child': "{'F2'}", 'Spouse': "{'F8'}", 'Age': 25}]
+
+These are the details for divorce dates that have occured after the death date of an individual.
+------------------------------------------------------------------------------
+
+User Story: 07 - Death should be less than 150 years after birth for dead people, and current date should be less than 150 years after birth for all living people
+
+Errors related to death Less then 150 years after birth (US07)
+: ['ERROR US07: I18 2001-08-06 Tahila Age: 151']
+
+These are the details for dead people who had age more than 150 years or alive people with current age more than 150 years.
+------------------------------------------------------------------------------
+
+User Story: 08 - Child should be born before the death of the mother and before 9 months after the death of the father
+
+Errors related to Child birth before parent death (US08)
+: ['ERROR US08: I15 Lewis 1982-05-04 1982-01-02 1979-11-04', 'ERROR US08: I15 Lewis 1982-05-04 1982-01-02 1979-11-04', 'ERROR US08: I8 Tyler 3011-07-16 2001-08-06 1900-03-02', 'ERROR US08: I8 Tyler 3011-07-16 2001-08-06 1900-03-02']
+
+These are the details for child who were born after 9 months of death of father or after death of mother.
+------------------------------------------------------------------------------User Story: 10 - Marriage should be at least 14 years after birth of both spouses (parents must be at least 14 years old)
+
+Errors related to Parents married under 14 years (US10)
+: ['I8', 'I16']
+
+These are the details for who were married below 14 years.
+------------------------------------------------------------------------------User Story: 11 - No bigamy: Marriage should not occur during marriage to another spouse
+
+Errors related to Bigamy (US11):
+[]
+
+These are errors related to Bigamy.
+------------------------------------------------------------------------------User Story: 12 - Parents not too old: Mother should be less than 60 years older than her children and father should be less than 80 years older than his children
+
+Errors related to Too old parents (US12):
+['Child I8 has parents too old to him']
+
+These are errors related to Parents who are too old to their child.
+------------------------------------------------------------------------------User Story: 13 - Birth dates of siblings should be more than 8 months apart or less than 2 days apart (twins may be born one day apart, e.g. 11:59 PM and 12:02 AM the following calendar day)
+
+Errors related to siblings birthday too close (US13):
+["Sibling birthdays should be less than 2 days apart or greater than 8 months apart.\nChild IDs with Error: ['I1', 'I10', 'I15']", "Sibling birthdays should be less than 2 days apart or greater than 8 months apart.\nChild IDs with Error: ['I1', 'I10', 'I15']", "Sibling birthdays should be less than 2 days apart or greater than 8 months apart.\nChild IDs with Error: ['I1', 'I10', 'I15']", "Sibling birthdays should be less than 2 days apart or greater than 8 months apart.\nChild IDs with Error: ['I8', 'I19']"]
+
+These errors are related to siblings whose birthdays are too close together.
+------------------------------------------------------------------------------User Story: 14 - No more than five siblings should be born at the same time
+
+Errors related to more than five siblings being born at the same time:
+["No more than five siblings should be born at the same time.\n Child IDs with Error: ['I3']", "No more than five siblings should be born at the same time.\n Child IDs with Error: ['I1', 'I10', 'I15']", "No more than five siblings should be born at the same time.\n Child IDs with Error: ['I7']", "No more than five siblings should be born at the same time.\n Child IDs with Error: ['I6']", "No more than five siblings should be born at the same time.\n Child IDs with Error: ['I8', 'I19']", "No more than five siblings should be born at the same time.\n Child IDs with Error: ['I13']", "No more than five siblings should be born at the same time.\n Child IDs with Error: ['I14']"]
+
+These errors are related to more than five siblings being born at the same time, exceeding the reasonable limit.
+------------------------------------------------------------------------------User Story: 15 - There should be fewer than 15 siblings in a family
+
+Errors related to more than 15 siblings (US15)
+: []
+
+These are the details of fewer than 15 siblings in a family.
+------------------------------------------------------------------------------User Story: 16 - All male members of a family should have the same last name
+
+Errors related to All male members of a family should have the same last name (US16)
+: []
+
+These are the details of All male members of a family should have the same last name.
+------------------------------------------------------------------------------User Story: 17 - Parents should not marry any of their descendants
+
+Errors related to marriage to descendants:
+[]
+
+These are the parents identified as married to descendants.
+------------------------------------------------------------------------------User Story: 18 - Siblings should not marry one another
+
+Errors related to siblings marrying each other:
+['ERROR US18: Siblings Allen (ID: I1) and Mark (ID: I10) are married to each other.', 'ERROR US18: Siblings Allen (ID: I1) and Lewis (ID: I15) are married to each other.', 'ERROR US18: Siblings Mark (ID: I10) and Lewis (ID: I15) are married to each other.', 'ERROR US18: Siblings Tyler (ID: I8) and Jhonny (ID: I19) are married to each other.']
+
+These are the siblings who are married to each other.
+------------------------------------------------------------------------------User Story: 19 - First cousins should not marry: First cousins should not marry one another
+
+(US19)
+: []
+
+These are the details of all first cousins who are married
+------------------------------------------------------------------------------User Story: 20 - Aunts and uncles: Aunts and uncles should not marry their nieces or nephews
+
+(US20)
+: []
+
+These are the details of all uncles and aunts who are married to their nieces or nephews
+------------------------------------------------------------------------------User Story: 21 - Husband in family should be male and wife in family should be female
+
+Errors related to incorrect gender for roles:
+['Wife ID I16has the incorrect gender role.']
+
+These errors are for either a father or mother having the incorrect gender.
+------------------------------------------------------------------------------User Story: 22 - All individual IDs should be unique and all family IDs should be unique
+
+Errors related to duplicate IDs:
+[]
+
+These errors are for duplicate family or individual IDs.
+------------------------------------------------------------------------------User Story: 23 - No more than one individual with the same name and birth date
+
+Errors related to No more than one individual with the same name and birth date(US23)
+: []
+
+These are the details of No more than one individual with the same name and birth date.
+------------------------------------------------------------------------------User Story: 24 - No more than one family with the same spouses by name and the same marriage date 
+
+Errors related to No more than one family with the same spouses by name and the same marriage date(US24)
+: []
+
+These are the details of No more than one family with the same spouses by name and the same marriage date .
+------------------------------------------------------------------------------

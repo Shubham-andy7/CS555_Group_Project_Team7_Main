@@ -1,30 +1,37 @@
 Individuals:
-+-----+-------------------+--------+------------+------------+-------+--------+--------+-----+
-|  ID |        Name       | Gender |  Birthday  |   Death    | Alive | Child  | Spouse | Age |
-+-----+-------------------+--------+------------+------------+-------+--------+--------+-----+
-|  I1 |  Allen /Roberts/  |   M    | 1940-01-01 | 2011-05-06 | False | {'F2'} | {'F1'} |  71 |
-|  I2 | Julie /Jefferson/ |   F    | 1945-12-04 | 2019-02-11 | False |   NA   | {'F1'} |  73 |
-|  I3 | Jenifer /Roberts/ |   F    | 1975-05-01 |     NA     |  True | {'F1'} | {'F4'} |  48 |
-|  I4 |   Andy /Raonic/   |   M    | 1974-12-06 |     NA     |  True |   NA   | {'F4'} |  48 |
-|  I5 |   Marie /Raonic/  |   F    | 2002-07-04 |     NA     |  True | {'F4'} |   NA   |  20 |
-|  I6 |   Nick /Rosberg/  |   M    | 1974-11-05 |     NA     |  True |   NA   | {'F3'} |  48 |
-|  I7 |  Roger /Rosberg/  |   M    | 2021-03-01 |     NA     |  True | {'F3'} |   NA   |  2  |
-|  I8 |  Tyler /Roberts/  |   M    | 1911-07-16 | 1979-11-04 | False |   NA   | {'F2'} |  68 |
-|  I9 |  Jenny /Gilbert/  |   F    | 1918-03-31 | 1982-01-02 | False |   NA   | {'F2'} |  63 |
-| I10 |   Mark /Roberts/  |   M    | 1945-05-12 | 1989-01-10 | False | {'F2'} | {'F5'} |  43 |
-| I11 |  Agatha /Murray/  |   F    | 1950-02-04 |     NA     |  True |   NA   | {'F6'} |  73 |
-| I12 | Joseph /Reynolds/ |   M    | 1950-05-04 |     NA     |  True |   NA   | {'F6'} |  73 |
-| I13 |  Jeremy /Roberts/ |   M    | 1982-12-01 |     NA     |  True | {'F5'} |   NA   |  40 |
-| I14 |  Lewis /Reynolds/ |   M    | 1994-03-12 |     NA     |  True | {'F6'} |   NA   |  29 |
-+-----+-------------------+--------+------------+------------+-------+--------+--------+-----+
++-----+---------+-----------+--------+------------+------------+-------+--------+--------+-------+
+|  ID |   Name  |  Lastname | Gender |  Birthday  |   Death    | Alive | Child  | Spouse |  Age  |
++-----+---------+-----------+--------+------------+------------+-------+--------+--------+-------+
+|  I1 |  Allen  |  Roberts  |   M    | 1940-01-01 | 2011-05-06 | False | {'F2'} | {'F1'} |   71  |
+|  I2 |  Julie  | Jefferson |   F    | 1945-12-04 | 2019-02-11 | False |   NA   | {'F1'} |   73  |
+|  I3 | Jenifer |  Roberts  |   F    | 1975-05-01 |     NA     |  True | {'F1'} | {'F4'} |   48  |
+|  I4 |   Nick  |  Rosberg  |   M    | 1974-11-05 |     NA     |  True |   NA   | {'F3'} |   48  |
+|  I5 |   Andy  |   Raonic  |   M    | 1974-12-06 |     NA     |  True |   NA   | {'F4'} |   48  |
+|  I6 |  Marie  |   Raonic  |   F    | 2002-07-04 |     NA     |  True | {'F4'} |   NA   |   21  |
+|  I7 |  Roger  |  Rosberg  |   M    | 2021-03-01 |     NA     |  True | {'F3'} |   NA   |   2   |
+|  I8 |  Tyler  |  Roberts  |   M    | 3011-07-16 | 1979-11-04 | False | {'F5'} | {'F2'} | -1032 |
+|  I9 |  Jenny  |  Gilbert  |   F    | 1918-03-31 | 1982-01-02 | False |   NA   | {'F2'} |   63  |
+| I10 |   Mark  |  Roberts  |   M    | 1945-05-12 | 1989-01-10 | False | {'F2'} | {'F6'} |   43  |
+| I11 |  Agatha |   Murray  |   F    | 1950-02-04 |     NA     |  True |   NA   | {'F7'} |   73  |
+| I12 |  Joseph |  Reynolds |   M    | 1950-05-04 |     NA     |  True |   NA   | {'F7'} |   73  |
+| I13 |  Jeremy |  Roberts  |   M    | 1982-12-01 |     NA     |  True | {'F6'} |   NA   |   40  |
+| I14 |  Lewis  |  Reynolds |   M    | 1994-03-12 |     NA     |  True | {'F7'} |   NA   |   29  |
+| I15 |  Lewis  |  Roberts  |   M    | 1982-05-04 | 2008-04-15 | False | {'F2'} | {'F8'} |   25  |
+| I16 |  Laura  |  Julliet  |   NA   | 1988-03-01 |     NA     |  True |   NA   | {'F8'} |   35  |
+| I17 |  Oscar  |  Roberts  |   M    | 1848-09-04 | 1900-03-02 | False |   NA   | {'F5'} |   51  |
+| I18 |  Tahila |  Stewarts |   F    | 1850-02-01 | 2001-08-06 | False |   NA   | {'F5'} |  151  |
+| I19 |  Jhonny |  Roberts  |   M    | 1900-03-02 |     NA     |  True | {'F5'} |   NA   |  123  |
++-----+---------+-----------+--------+------------+------------+-------+--------+--------+-------+
 Families:
-+----+------------+-------------------+---------+-------------------+------------+------------+---------------+
-| ID | Husband ID |    Husband Name   | Wife ID |     Wife Name     |  Married   |  Divorced  |    Children   |
-+----+------------+-------------------+---------+-------------------+------------+------------+---------------+
-| F1 |     I1     |  Allen /Roberts/  |    I2   | Julie /Jefferson/ | 1972-10-08 |     NA     |     ['I3']    |
-| F2 |     I8     |  Tyler /Roberts/  |    I9   |  Jenny /Gilbert/  | 1939-02-26 |     NA     | ['I1', 'I10'] |
-| F3 |     I6     |   Nick /Rosberg/  |    I3   | Jenifer /Roberts/ | 2018-05-17 |     NA     |     ['I7']    |
-| F4 |     I4     |   Andy /Raonic/   |    I3   | Jenifer /Roberts/ | 2001-06-12 | 2015-04-30 |     ['I5']    |
-| F5 |    I10     |   Mark /Roberts/  |   I11   |  Agatha /Murray/  |     NA     |     NA     |    ['I13']    |
-| F6 |    I12     | Joseph /Reynolds/ |   I11   |  Agatha /Murray/  | 1990-09-10 |     NA     |    ['I14']    |
-+----+------------+-------------------+---------+-------------------+------------+------------+---------------+
++----+------------+--------------+------------------+---------+-----------+---------------+------------+------------+----------------------+
+| ID | Husband ID | Husband Name | Husband Lastname | Wife ID | Wife Name | Wife Lastname |  Married   |  Divorced  |       Children       |
++----+------------+--------------+------------------+---------+-----------+---------------+------------+------------+----------------------+
+| F1 |     I1     |    Allen     |     Roberts      |    I2   |   Julie   |   Jefferson   | 2012-10-08 |     NA     |        ['I3']        |
+| F2 |     I8     |    Tyler     |     Roberts      |    I9   |   Jenny   |    Gilbert    | 1939-02-26 |     NA     | ['I1', 'I10', 'I15'] |
+| F3 |     I4     |     Nick     |     Rosberg      |    I3   |  Jenifer  |    Roberts    | 2018-05-17 |     NA     |        ['I7']        |
+| F4 |     I5     |     Andy     |      Raonic      |    I3   |  Jenifer  |    Roberts    | 2020-06-12 | 2015-04-30 |        ['I6']        |
+| F5 |    I17     |    Oscar     |     Roberts      |   I18   |   Tahila  |    Stewarts   | 1890-04-02 |     NA     |    ['I8', 'I19']     |
+| F6 |    I10     |     Mark     |     Roberts      |   I11   |   Agatha  |     Murray    |     NA     |     NA     |       ['I13']        |
+| F7 |    I12     |    Joseph    |     Reynolds     |   I11   |   Agatha  |     Murray    | 1990-09-10 |     NA     |       ['I14']        |
+| F8 |    I15     |    Lewis     |     Roberts      |   I16   |   Laura   |    Julliet    | 2000-08-07 | 2019-10-10 |          []          |
++----+------------+--------------+------------------+---------+-----------+---------------+------------+------------+----------------------+
