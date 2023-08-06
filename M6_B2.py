@@ -73,6 +73,14 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
     def test_US16_1(self):
         Error12 = US16_Male_Last_Name(self.individuals11, self.family8)
         self.assertEqual(Error12, ["ERROR US16: Jhonny has a different last name: Roberts than the father's last name: Bairstow"])
+
+    def test_US17_1(self):
+        Error17 = US17_Parent_Shouldnt_marry_descendants(self.individuals3, self.family1)
+        self.assertEqual(Error17, [])
+
+    def test_US18_1(self):
+        Error18 = US18_Siblings_Shouldnt_Marry(self.individuals1, self.family9)
+        self.assertEqual(Error18, [])
     
     def test_US21_1(self):
         Error21 = US21_correct_gender_for_role(self.individuals3, self.family1)
