@@ -562,6 +562,26 @@ def US24_Unique_Families_by_Spouses(family):
 
     return Error24
 
+#User Story 29: List deceased - List all deceased individuals in a GEDCOM file
+def US29_list_deceased(individuals):
+    List29 = []
+
+    for id in individuals.keys():
+        if individuals[id]['Alive'] == 'False':
+            List29.append(individuals[id]['Name'] + " " +  individuals[id]['Lastname'])
+
+    return List29
+
+#User Story 30: List living married - List all living married peopole in a GEDCOM file
+def US30_list_living_married(individuals):
+    List30 = []
+
+    for id in individuals.keys():
+        if individuals[id]['Alive'] == 'True' and individuals[id]['Spouse'] != 'NA':
+            List30.append(individuals[id]['Name'] + " " +  individuals[id]['Lastname'])
+
+    return List30
+
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
@@ -869,6 +889,16 @@ if __name__ == "__main__":
         # User Story 24: Unique families by spouses: No more than one family with the same spouses by name and the same marriage date should appear in a GEDCOM file
         Error24 = US24_Unique_Families_by_Spouses(family)
         output += "User Story: 24 - No more than one family with the same spouses by name and the same marriage date \n\nErrors related to No more than one family with the same spouses by name and the same marriage date(US24)\n: " + str(Error23) + "\n\n" + "These are the details of No more than one family with the same spouses by name and the same marriage date ." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        # User Story 29: List deceased - List all deceased individuals in a GEDCOM file
+        List29 = US29_list_deceased(individuals)
+        output += "User Story 29: List of all deceased people in the GEDCOM file:\n" + str(List29) + "\n\n"
+        output+= "------------------------------------------------------------------------------"
+
+        # User Story 30: List living married - List all living married people in a GEDCOM file
+        List30 = US30_list_living_married(individuals)
+        output += "User Story 30: List of all living people who are married in the GEDCOM file:\n" + str(List30) + "\n\n"
         output+= "------------------------------------------------------------------------------"
 
         with open("M4B3_Sprint1_Ouput.txt", "w") as out:

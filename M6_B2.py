@@ -24,6 +24,8 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
         self.individuals11 = {'I1': {'id': 'I1', 'Name': 'Jhonny', 'Lastname': 'Bairstow', 'Gender': 'M', 'Birthday': '1900-03-02', 'Death': 'NA', 'Alive': 'True', 'Child': "{'F1'}", 'Spouse': 'NA', 'Age': 123}, 'I19': {'id': 'I19', 'Name': 'Jhonny', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '1900-03-02', 'Death': 'NA', 'Alive': 'True', 'Child': "{'F5'}", 'Spouse': 'NA', 'Age': 123}}
         self.family9 = {'F1': {'id': 'F1', 'Husband ID': 'I1', 'Husband Name': 'Allen', 'Husband Lastname': 'Roberts', 'Wife ID': 'I2', 'Wife Name': 'Julie', 'Wife Lastname': 'Jefferson', 'Married': '2012-10-08', 'Divorced': 'NA', 'Children': ['I3']},'F2': {'id': 'F1', 'Husband ID': 'I1', 'Husband Name': 'Allen', 'Husband Lastname': 'Roberts', 'Wife ID': 'I4', 'Wife Name': 'Honey', 'Wife Lastname': 'Jefferson', 'Married': '2012-10-08', 'Divorced': 'NA', 'Children': ['I3']}}
         self.individuals12 = {'I3': {'id': 'I3', 'Name': 'Julie /Jefferson/', 'Gender': 'M', 'Birthday': '2011-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "{'F1'}", 'Age': 73}}
+        self.individuals13 = {'I1': {'id': 'I1', 'Name': 'Jhonny', 'Lastname': 'Bairstow', 'Gender': 'M', 'Birthday': '1900-03-02', 'Death': '1988-05-03', 'Alive': 'False', 'Child': "{'F1'}", 'Spouse': 'NA', 'Age': 123}, 'I19': {'id': 'I19', 'Name': 'Jhonny', 'Lastname': 'Roberts', 'Gender': 'M', 'Birthday': '1900-03-02', 'Death': 'NA', 'Alive': 'True', 'Child': "{'F5'}", 'Spouse': "{'F2'}", 'Age': 123}}
+
     def test_US9_1(self):
         Error01= US09_birth_before_death_of_parents(self.family1, self.individuals1)
         self.assertEqual(Error01, ['ERROR US09: I3 Julie /Jefferson/ 2011-10-08'])
@@ -95,6 +97,22 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
     def test_US24_1(self):
         Error24 = US24_Unique_Families_by_Spouses(self.family9)
         self.assertEqual(Error24, [])
+
+    def test_US29_1(self):
+        List29 = US29_list_deceased(self.individuals11)
+        self.assertEqual(List29, [])
+    
+    def test_US29_2(self):
+        List29 = US29_list_deceased(self.individuals13)
+        self.assertEqual(List29, ["Jhonny Bairstow"])
+
+    def test_US30_1(self):
+        List30 = US30_list_living_married(self.individuals11)
+        self.assertEqual(List30, [])
+
+    def test_US30_2(self):
+        List30 = US30_list_living_married(self.individuals13)
+        self.assertEqual(List30, ["Jhonny Roberts"])
     
     
 if __name__ == '__main__':

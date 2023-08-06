@@ -150,4 +150,10 @@ Errors related to No more than one family with the same spouses by name and the 
 : []
 
 These are the details of No more than one family with the same spouses by name and the same marriage date .
+------------------------------------------------------------------------------User Story 29: List of all deceased people in the GEDCOM file:
+['Allen Roberts', 'Julie Jefferson', 'Tyler Roberts', 'Jenny Gilbert', 'Mark Roberts', 'Lewis Roberts', 'Oscar Roberts', 'Tahila Stewarts']
+
+------------------------------------------------------------------------------User Story 30: List of all living people who are married in the GEDCOM file:
+['Jenifer Roberts', 'Nick Rosberg', 'Andy Raonic', 'Agatha Murray', 'Joseph Reynolds', 'Laura Julliet']
+
 ------------------------------------------------------------------------------
