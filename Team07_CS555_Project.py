@@ -582,6 +582,45 @@ def US30_list_living_married(individuals):
 
     return List30
 
+# User Story 31: List living single: List all living people over 30 who have never been married in a GEDCOM file
+def calculate_age(birth_date, current_date):
+    # Function to calculate age based on birth date and current date
+    return current_date.year - birth_date.year - ((current_date.month, current_date.day) < (birth_date.month, birth_date.day))
+
+def US31_List_Living_Single(individuals):
+    current_date = datetime.today()
+    Error31 = []
+
+    for ind_id, individual in individuals.items():
+        if individual['Alive'] == 'True':  # Check if the individual is alive
+            birth_date_str = individual.get('Birthday')
+            birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d')
+            age = calculate_age(birth_date, current_date)
+
+            if age > 30 and 'FAMS' not in individual:  # Check if the individual is over 30 and has no spouse
+               print (individual)
+               Error31.append(individual)
+               
+    return Error31
+    
+# User Story 32: List all multiple births in a GEDCOM file
+from collections import defaultdict
+def US32_List_Multiple_Births(family, individuals):
+    multiple_births = defaultdict(list)
+
+    for family_id, details in family.items():
+        children = details['Children']
+        if children:
+            for child_id in children:
+                birth_date = individuals[child_id]['Birthday']
+                multiple_births[birth_date].append(individuals[child_id])
+
+    # Filter out single births
+    multiple_births = {key: value for key, value in multiple_births.items() if len(value) > 1}
+
+    return multiple_births
+
+
 def get_ind_fam_details(gedcomfile):
     individuals = []
     individual = []
