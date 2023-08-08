@@ -121,6 +121,14 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
     def test_US30_2(self):
         List30 = US30_list_living_married(self.individuals13)
         self.assertEqual(List30, ["Jhonny Roberts"])
+
+    def test_US31_1(self):
+        Error31 = US31_List_Living_Single(self.individuals4)
+        self.assertEqual(Error31, [])
+
+    def test_US31_2(self):
+        Error31 = US31_List_Living_Single(self.individuals8)
+        self.assertEqual(Error31, [])
     
     
 if __name__ == '__main__':
