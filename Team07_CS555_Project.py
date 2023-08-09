@@ -562,6 +562,49 @@ def US24_Unique_Families_by_Spouses(family):
 
     return Error24
 
+
+#User Story 27: Include person's current age when listing individuals
+def US27_include_individual_ages(individuals):
+    list27 = []
+    current_date = datetime.today()
+    for id in individuals.keys():
+        birth_date_str = individuals[id].get('Birthday')
+        birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d')
+        age = calculate_age(birth_date, current_date)
+        list27.append(individuals[id]['Name'] + " "+ individuals[id]['Lastname']+" "+" - "+"Age: "+str(age))
+    return list27
+
+
+#User Story 28: List siblings in families by decreasing age, i.e. oldest siblings first
+def US28_siblings_decreasing_age(family, individuals):
+    list28 = []
+    current_date = datetime.today()
+    for fam in family.values():
+        children = fam.get('Children', [])
+        
+        # Create a list to store child information along with their ages
+        child_info = []
+        
+        for child_id in children:
+            child = individuals[child_id]
+            birth_date_str = child.get('Birthday')
+            birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d')
+            age = calculate_age(birth_date, current_date)
+            name = child.get('Name')
+            lastname = child.get('Lastname')
+            full_name = f'{child_id} - {name} {lastname} '
+            child_info.append((full_name, birth_date_str, age))
+        
+        # Sort the child_info list in decreasing order of age
+        child_info.sort(key=lambda x: x[1], reverse=True)
+        
+        # Add the sorted child IDs to the list28
+        sorted_child_ids = [child[0] for child in child_info]
+        list28.append(sorted_child_ids)
+    
+    return list28
+
+
 #User Story 29: List deceased - List all deceased individuals in a GEDCOM file
 def US29_list_deceased(individuals):
     List29 = []
@@ -928,6 +971,16 @@ if __name__ == "__main__":
         # User Story 24: Unique families by spouses: No more than one family with the same spouses by name and the same marriage date should appear in a GEDCOM file
         Error24 = US24_Unique_Families_by_Spouses(family)
         output += "User Story: 24 - No more than one family with the same spouses by name and the same marriage date \n\nErrors related to No more than one family with the same spouses by name and the same marriage date(US24)\n: " + str(Error23) + "\n\n" + "These are the details of No more than one family with the same spouses by name and the same marriage date ." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        #User Story 27: Include person's current age when listing individuals
+        List27 = US27_include_individual_ages(individuals)
+        output += "User Story 27: List of all individuals with current age"+str(List27)+"/n/n"
+        output+= "------------------------------------------------------------------------------"
+
+        #User Story 28: List siblings in families by decreasing age, i.e. oldest siblings first
+        List28 = US28_siblings_decreasing_age(family,individuals)
+        output += "User Story 28: List of all siblings in a family in decreasing order"+str(List28)+"/n/n"
         output+= "------------------------------------------------------------------------------"
 
         # User Story 29: List deceased - List all deceased individuals in a GEDCOM file
