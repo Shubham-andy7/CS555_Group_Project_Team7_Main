@@ -29,6 +29,19 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
         self.individuals14 = {'I1': {'id': 'I1', 'Name': 'John /Jefferson/', 'Gender': 'M', 'Birthday': '2010-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "{'F1'}", 'Age': 73}, 'I2': {'id': 'I2', 'Name': 'Julie /Jefferson/', 'Gender': 'F', 'Birthday': '2011-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "{'F1'}", 'Age': 8}, 'I3': {'id': 'I3', 'Name': 'Jollie /Jefferson/', 'Gender': 'F', 'Birthday': '2011-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "NA", 'Age': 73}, 'I4': {'id': 'I4', 'Name': 'Jenny /Jefferson/', 'Gender': 'F', 'Birthday': '2011-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "NA", 'Age': 73}}
         self.family11 = {'F1': {'id': 'F1', 'Husband ID': 'I1', 'Husband Name': 'Allen', 'Husband Lastname': 'Roberts', 'Wife ID': 'I2', 'Wife Name': 'Julie', 'Wife Lastname': 'Jefferson', 'Married': '2012-10-08', 'Divorced': 'NA', 'Children': ['I3']},'F2': {'id': 'F1', 'Husband ID': 'I1', 'Husband Name': 'Allen', 'Husband Lastname': 'Roberts', 'Wife ID': 'I4', 'Wife Name': 'Honey', 'Wife Lastname': 'Jefferson', 'Married': '2012-10-08', 'Divorced': 'NA', 'Children': ['I3']}}
         self.individuals15 = {'I1': {'id': 'I1', 'Name': 'John /Jefferson/', 'Gender': 'M', 'Birthday': '2010-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "{'F1'}", 'Age': 73}, 'I2': {'id': 'I2', 'Name': 'Julie /Jefferson/', 'Gender': 'F', 'Birthday': '2011-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "{'F1'}", 'Age': 8}, 'I3': {'id': 'I3', 'Name': 'Jollie /Jefferson/', 'Gender': 'F', 'Birthday': '2011-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "NA", 'Age': 73}, 'I3': {'id': 'I3', 'Name': 'Jenny /Jefferson/', 'Gender': 'F', 'Birthday': '2011-10-08', 'Death': '2019-02-11', 'Alive': 'False', 'Child': 'NA', 'Spouse': "NA", 'Age': 73}}
+        self.individuals16 = {
+            'I1': {'id': 'I1', 'Name': 'John', 'Lastname': 'Doe', 'Gender': 'M', 'Birthday': '1990-01-01'},
+            'I2': {'id': 'I2', 'Name': 'Jane', 'Lastname': 'Smith', 'Gender': 'F', 'Birthday': '1985-05-15'}
+        }
+        self.family12 = {
+            'F1': {'id': 'F1', 'Husband ID': 'I1', 'Husband Name': 'John', 'Husband Lastname': 'Smith', 'Wife ID': 'I2', 'Wife Name': 'Jane', 'Wife Lastname': 'Smith', 'Married': '2000-05-15', 'Divorced': 'NA', 'Children': ['I3', 'I4', 'I5']}
+        }
+        
+        self.individuals17 = {
+            'I3': {'id': 'I3', 'Name': 'Alice', 'Lastname': 'Smith', 'Gender': 'F', 'Birthday': '2005-03-20', 'Death': 'NA', 'Alive': 'True', 'Child': 'F1', 'Spouse': 'NA', 'Age': 18},
+            'I4': {'id': 'I4', 'Name': 'Bob', 'Lastname': 'Smith', 'Gender': 'M', 'Birthday': '2008-11-10', 'Death': 'NA', 'Alive': 'True', 'Child': 'F1', 'Spouse': 'NA', 'Age': 13},
+            'I5': {'id': 'I5', 'Name': 'Charlie', 'Lastname': 'Smith', 'Gender': 'M', 'Birthday': '2010-07-05', 'Death': 'NA', 'Alive': 'True', 'Child': 'F1', 'Spouse': 'NA', 'Age': 11}
+        }
 
     def test_US9_1(self):
         Error01= US09_birth_before_death_of_parents(self.family1, self.individuals1)
@@ -117,6 +130,23 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
     def test_26_1(self):
         Error26 = US26_corresponding_entries(self.family10, self.individuals14)
         self.assertEqual(Error26, {'spouse': [], 'child': []})
+
+    def test_US27_1(self):
+        expected_output = [
+            "John Doe - Age: 33",
+            "Jane Smith - Age: 38"
+        ]
+        list27 = US27_include_individual_ages(self.individuals16)
+        self.assertEqual(list27, expected_output)
+
+    def test_US28_1(self):
+        expected_output = [
+            ['I3 - Alice Smith ', 'I4 - Bob Smith ', 'I5 - Charlie Smith ']
+        ]
+        
+        list28 = US28_siblings_decreasing_age(self.family12, self.individuals17)
+        
+        self.assertEqual(list28, expected_output)
 
     def test_US29_1(self):
         List29 = US29_list_deceased(self.individuals11)
