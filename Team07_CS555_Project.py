@@ -306,7 +306,6 @@ def US15_Fewer_than_15_siblings(family):
     for fam_id in family.keys():
         if "Children" in family[fam_id]:
             num_siblings = len(family[fam_id]["Children"])
-            print(num_siblings)
             if num_siblings >= 15:
                 Error15.append(f"ERROR US15: {fam_id} has {num_siblings} siblings, which is more than 15.")
     return Error15
@@ -562,6 +561,64 @@ def US24_Unique_Families_by_Spouses(family):
 
     return Error24
 
+# User Story 25: Unique first names in families: No more than one child with the same name and birth date should appear in a family
+
+def US25_Unique_first_names_in_families(family, individuals):
+    child_info = {}
+    Error25 = []
+    for family_id, family_data in family.items():
+        children = family_data['Children']
+        for child_id in children:
+            child = individuals[child_id]
+            child_key = (child['Name'], child['Birthday'])
+
+            if child_key in child_info:
+                Error25.append(child_id)
+            else:
+                child_info[child_key] = True
+
+    return Error25
+
+# User Story 26: Corresponding entries: All family roles (spouse, child) specified in an individual record should have corresponding entries in the corresponding family records. Likewise, all individual roles (spouse, child) specified in family records should have corresponding entries in the corresponding  individual's records.  I.e. the information in the individual and family records should be consistent.
+
+def US26_corresponding_entries(family, individuals):
+    individual_spouse_info = {}
+    individual_child_info = {}
+    Error26_spouse = []
+    Error26_child = []
+    Error26 = {}
+
+    for family_id, family_data in family.items():
+        husband_id = family_data['Husband ID']
+        wife_id = family_data['Wife ID']
+
+        if husband_id in individuals:
+            individual_spouse_info.setdefault(husband_id, []).append(family_id)
+
+        if wife_id in individuals:
+            individual_spouse_info.setdefault(wife_id, []).append(family_id)
+
+        for child_id in family_data['Children']:
+            if child_id in individuals:
+                individual_child_info.setdefault(child_id, []).append(family_id)
+
+    for individual_id, individual_data in individuals.items():
+        if 'Spouse' in individual_data:
+            spouse_families = [individual_data['Spouse']]
+            for spouse_id in spouse_families:
+                if spouse_id in individual_spouse_info and individual_spouse_info[spouse_id] != spouse_families:
+                    Error26_spouse.append(spouse_id)
+
+        if 'Child' in individual_data:
+            child_families = [individual_data['Child']]
+            for child_id in child_families:
+                if child_id in individual_child_info and individual_child_info[child_id] != child_families:
+                    return Error26_child.append(child_id)
+            
+    Error26["spouse"] = Error26_spouse
+    Error26["child"] = Error26_child
+    return Error26
+
 
 #User Story 27: Include person's current age when listing individuals
 def US27_include_individual_ages(individuals):
@@ -641,12 +698,12 @@ def US31_List_Living_Single(individuals):
             age = calculate_age(birth_date, current_date)
 
             if age > 30 and 'FAMS' not in individual:  # Check if the individual is over 30 and has no spouse
-               print (individual)
                Error31.append(individual)
                
     return Error31
     
 # User Story 32: List all multiple births in a GEDCOM file
+Error32 = []
 from collections import defaultdict
 def US32_List_Multiple_Births(family, individuals):
     multiple_births = defaultdict(list)
@@ -660,7 +717,7 @@ def US32_List_Multiple_Births(family, individuals):
 
     # Filter out single births
     multiple_births = {key: value for key, value in multiple_births.items() if len(value) > 1}
-
+    
     return multiple_births
 
 
@@ -825,7 +882,6 @@ def get_ind_fam_details(gedcomfile):
 def display_gedcom_table(individuals, family):
     
     #Print individuals table
-    #print(individuals)
     output_tables = ""
     with open('M3_B2_output.txt','w') as output:
         inditable = PrettyTable()
@@ -834,7 +890,6 @@ def display_gedcom_table(individuals, family):
             inditable.add_row(list(individuals[i].values()))
         output_tables += 'Individuals:' + '\n' + str(inditable) + '\n'
 
-        #print(family)
         #Print Families table
         famtable = PrettyTable()
         famtable.field_names = ['ID', 'Husband ID', 'Husband Name', 'Husband Lastname', 'Wife ID', 'Wife Name', 'Wife Lastname', 'Married', 'Divorced', 'Children']
@@ -970,31 +1025,52 @@ if __name__ == "__main__":
         
         # User Story 24: Unique families by spouses: No more than one family with the same spouses by name and the same marriage date should appear in a GEDCOM file
         Error24 = US24_Unique_Families_by_Spouses(family)
-        output += "User Story: 24 - No more than one family with the same spouses by name and the same marriage date \n\nErrors related to No more than one family with the same spouses by name and the same marriage date(US24)\n: " + str(Error23) + "\n\n" + "These are the details of No more than one family with the same spouses by name and the same marriage date ." + "\n"
+        output += "User Story: 24 - No more than one family with the same spouses by name and the same marriage date \n\nErrors related to No more than one family with the same spouses by name and the same marriage date(US24)\n: " + str(Error24) + "\n\n" + "These are the details of No more than one family with the same spouses by name and the same marriage date ." + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        # User Story 25: Unique first names in families: No more than one child with the same name and birth date should appear in a family
+
+        Error25 = US25_Unique_first_names_in_families(family, individuals)
+        output += "User Story 25 - No more than one child with the same name and birth date should appear in a family\n\nErrors related to Unique first names in families(US25)\n: " + str(Error25) + "\n\n" + "These are the details of Unique first names in families" + "\n"
+        output+= "------------------------------------------------------------------------------"
+
+        # User Story 26: Corresponding entries: All family roles (spouse, child) specified in an individual record should have corresponding entries in the corresponding family records. Likewise, all individual roles (spouse, child) specified in family records should have corresponding entries in the corresponding  individual's records.  I.e. the information in the individual and family records should be consistent.
+
+        Error26 = US26_corresponding_entries(family, individuals)
+        output += "User Story 26 - All family roles (spouse, child) specified in an individual record should have corresponding entries in the corresponding family records. Likewise, all individual roles (spouse, child) specified in family records should have corresponding entries in the corresponding  individual's records.  I.e. the information in the individual and family records should be consistent.\n\nErrors related to Corresponding entries(US26)\n: " + str(Error26) + "\n\n" + "These are the details of Corresponding entries" + "\n"
         output+= "------------------------------------------------------------------------------"
 
         #User Story 27: Include person's current age when listing individuals
-        List27 = US27_include_individual_ages(individuals)
-        output += "User Story 27: List of all individuals with current age"+str(List27)+"/n/n"
+        Error27 = US27_include_individual_ages(individuals)
+        output += "User Story 27 - List of all individuals with current age"+str(Error27)+"/n/n"
         output+= "------------------------------------------------------------------------------"
 
         #User Story 28: List siblings in families by decreasing age, i.e. oldest siblings first
-        List28 = US28_siblings_decreasing_age(family,individuals)
-        output += "User Story 28: List of all siblings in a family in decreasing order"+str(List28)+"/n/n"
+        Error28 = US28_siblings_decreasing_age(family,individuals)
+        output += "User Story 28 - List of all siblings in a family in decreasing order"+str(Error28)+"/n/n"
         output+= "------------------------------------------------------------------------------"
 
         # User Story 29: List deceased - List all deceased individuals in a GEDCOM file
-        List29 = US29_list_deceased(individuals)
-        output += "User Story 29: List of all deceased people in the GEDCOM file:\n" + str(List29) + "\n\n"
+        Error29 = US29_list_deceased(individuals)
+        output += "User Story 29 - List of all deceased people in the GEDCOM file:\n" + str(Error29) + "\n\n"
         output+= "------------------------------------------------------------------------------"
 
         # User Story 30: List living married - List all living married people in a GEDCOM file
-        List30 = US30_list_living_married(individuals)
-        output += "User Story 30: List of all living people who are married in the GEDCOM file:\n" + str(List30) + "\n\n"
+        Error30 = US30_list_living_married(individuals)
+        output += "User Story 30 - List of all living people who are married in the GEDCOM file:\n" + str(Error30) + "\n\n"
+        output+= "------------------------------------------------------------------------------"
+
+        # User Story 31: List living single: List all living people over 30 who have never been married in a GEDCOM file
+
+        Error31 = US31_List_Living_Single(individuals)
+        output += "User Story 31 - List all living people over 30 who have never been married in a GEDCOM file:\n" + str(Error31) + "\n\n"
+        output+= "------------------------------------------------------------------------------"
+
+        # User Story 32: List multiple births: List all multiple births in a GEDCOM file
+
+        Error32 = US32_List_Multiple_Births(family, individuals)
+        output += "User Story 32 - List all multiple births in a GEDCOM file:\n" + str(Error32) + "\n\n"
         output+= "------------------------------------------------------------------------------"
 
         with open("M4B3_Sprint1_Ouput.txt", "w") as out:
             out.write(output)
-
-        print(family)
-        print(individuals)
