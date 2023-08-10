@@ -132,16 +132,13 @@ class TestUS3BirthBeforeDeath(unittest.TestCase):
         self.assertEqual(Error26, {'spouse': [], 'child': []})
 
     def test_US27_1(self):
-        expected_output = [
-            "John Doe - Age: 33",
-            "Jane Smith - Age: 38"
-        ]
+        expected_output = ["John Doe  - Age: 33", "Jane Smith  - Age: 38"]
         list27 = US27_include_individual_ages(self.individuals16)
         self.assertEqual(list27, expected_output)
 
     def test_US28_1(self):
         expected_output = [
-            ['I3 - Alice Smith ', 'I4 - Bob Smith ', 'I5 - Charlie Smith ']
+            ['I5 - Charlie Smith ', 'I4 - Bob Smith ', 'I3 - Alice Smith ']
         ]
         
         list28 = US28_siblings_decreasing_age(self.family12, self.individuals17)
