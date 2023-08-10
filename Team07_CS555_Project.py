@@ -633,13 +633,13 @@ def US27_include_individual_ages(individuals):
 
 
 #User Story 28: List siblings in families by decreasing age, i.e. oldest siblings first
- def US28_siblings_decreasing_age(family, individuals):
+def US28_siblings_decreasing_age(family, individuals):
     list28 = []
     current_date = datetime.today()
-    
     for fam in family.values():
         children = fam.get('Children', [])
         
+        # Create a list to store child information along with their ages
         child_info = []
         
         for child_id in children:
@@ -652,8 +652,10 @@ def US27_include_individual_ages(individuals):
             full_name = f'{child_id} - {name} {lastname} '
             child_info.append((full_name, birth_date_str, age))
         
-        child_info.sort(key=lambda x: x[2], reverse=True) 
+        # Sort the child_info list in decreasing order of age
+        child_info.sort(key=lambda x: x[1], reverse=True)
         
+        # Add the sorted child IDs to the list28
         sorted_child_ids = [child[0] for child in child_info]
         list28.append(sorted_child_ids)
     
